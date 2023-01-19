@@ -1,0 +1,15 @@
+Mot con vit xoa ra bao nhieu canh?
+2 canh
+3 canh
+4 canh
+1
+Con cho co bao nhieu chan?
+2 chan
+3 chan
+4 chan
+3
+Tac gia cua Truyen Kieu la ai?
+Nguyen Du
+Nguyen Trai
+Nguyen Dinh Chieu
+1
