@@ -34,11 +34,23 @@ typedef struct conn_msg_type_t
     conn_data_type data;
 } conn_msg_type;
 
+// Define client's room
+typedef struct client_room_type_t
+{
+    int connfd[PLAYER_PER_ROOM];
+
+    // status of client
+    // 0: not ready, 1: ready, -1: AFK
+    int status[PLAYER_PER_ROOM];
+    int slot;
+} client_room_type;
+
 // Define function's prototype
 conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data);
 void copy_player_type(player_type *dest, player_type src);
 void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
 void copy_game_state_type(game_state_type *dest, game_state_type src);
+client_room_type init_client_room();
 
 // Define function's body
 
@@ -93,5 +105,15 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data){
             copy_game_state_type(&conn_msg.data.game, data.game);
             break;
     }
+}
+
+client_room_type init_client_room(){
+    client_room_type client_room;
+    for(int i = 0; i < PLAYER_PER_ROOM; i++){
+        client_room.connfd[i] = -1;
+        client_room.status[i] = 0;
+    }
+    client_room.slot = PLAYER_PER_ROOM;
+    return client_room;
 }
 #endif
