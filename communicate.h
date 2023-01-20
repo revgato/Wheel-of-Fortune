@@ -34,15 +34,51 @@ typedef struct conn_msg_type_t
     conn_data_type data;
 } conn_msg_type;
 
+// Define function's prototype
+conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data);
+void copy_player_type(player_type *dest, player_type src);
+void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
+void copy_game_state_type(game_state_type *dest, game_state_type src);
+
+// Define function's body
+
+void copy_player_type(player_type *dest, player_type src){
+    strcpy(dest->username, src.username);
+    dest->point = src.point;
+    dest->id = src.id;
+}
+
+void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src){
+    for(int i = 0; i < PLAYER_PER_ROOM; i++){
+        copy_player_type(&dest->player[i], src.player[i]);
+    }
+    dest->slot = src.slot;
+}
+
+void copy_game_state_type(game_state_type *dest, game_state_type src){
+    for(int i = 0; i < PLAYER_PER_ROOM; i++){
+        copy_player_type(&dest->player[i], src.player[i]);
+    }
+    dest->turn = src.turn;
+    dest->guess_char = src.guess_char;
+    for(int i = 0; i < 15; i++){
+        dest->sectors[i] = src.sectors[i];
+    }
+    dest->sector = src.sector;
+    strcpy(dest->key, src.key);
+    strcpy(dest->crossword, src.crossword);
+    strcpy(dest->game_message, src.game_message);
+}
+
 conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data){
     conn_msg_type conn_msg;
     conn_msg.type = type;
     switch(type){
         case JOIN:
-            conn_msg.data.player = data.player;
+            copy_player_type(&conn_msg.data.player, data.player);
             break;
         case WAITING_ROOM:
-            conn_msg.data.waiting_room = data.waiting_room;
+            copy_waiting_room_type(&conn_msg.data.waiting_room, data.waiting_room);
             break;
         // case START:
         //     conn_msg.data.game = data.game;
@@ -51,10 +87,10 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data){
         //     conn_msg.data.player = data.player;
         //     break;
         case GAME_STATE:
-            conn_msg.data.game = data.game;
+            copy_game_state_type(&conn_msg.data.game, data.game);
             break;
         case GUESS_CHAR:
-            conn_msg.data.game = data.game;
+            copy_game_state_type(&conn_msg.data.game, data.game);
             break;
     }
 }

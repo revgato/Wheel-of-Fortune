@@ -64,12 +64,13 @@ void init_crossword(char key[], char crossword[]);
 player_type init_player(char username[]);
 void get_sub_question(sub_question_type *sub_question);
 
-// Function's definition
+// Function's body
 player_type init_player(char username[])
 {
     player_type player;
     strcpy(player.username, username);
     player.point = 0;
+    player.id = -1;
     return player;
 }
 
@@ -186,6 +187,8 @@ void get_sub_question(sub_question_type *sub_question)
 
     // Random pick 1 line
     int random_line = rand() % num_line;
+    // Scale to divide by 4
+    random_line = random_line - random_line % 5;
     int i = 0;
     while (i < random_line)
     {
@@ -199,7 +202,7 @@ void get_sub_question(sub_question_type *sub_question)
     fscanf(f, "%[^\n]%*c", sub_question->answer[0]);
     fscanf(f, "%[^\n]%*c", sub_question->answer[1]);
     fscanf(f, "%[^\n]%*c", sub_question->answer[2]);
-    fscanf(f, "%c", &sub_question->key);
+    fscanf(f, "%c%*c", &sub_question->key);
     fclose(f);
 }
 
