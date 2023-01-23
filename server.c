@@ -56,10 +56,30 @@ int main()
             if ((client_room.connfd[client_room.slot - 1] = accept(listenfd, (struct sockaddr *)client, &sin_size)) == -1)
                 perror("\nError: ");
             printf("You got a connection from %s\n", inet_ntoa((*client).sin_addr)); /* Print client's IP */
+            // TODO: Receive username from client
+
+            // TODO: Send waiting room to client
+
             client_room.slot--;
         }
 
         // For each client's room, spawns a thread, and the thread handles the new client's room
         pthread_create(&tid, NULL, &client_handle, &client_room);
     }
+}
+
+void *client_handle(void *arg)
+{
+    client_room_type client_room = *(client_room_type *)arg;
+    int bytes_sent, bytes_received;
+    game_state_type game_state = init_game_state();
+
+
+    // Init player
+    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
+    }
+
+    // 21/1/2023: Init player in game state
 }

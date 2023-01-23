@@ -61,16 +61,16 @@ game_state_type init_game_state();
 waiting_room_type init_waiting_room();
 char* init_key();
 void init_crossword(char key[], char crossword[]);
-player_type init_player(char username[]);
+player_type init_player(char username[], int id);
 void get_sub_question(sub_question_type *sub_question);
 
 // Function's body
-player_type init_player(char username[])
+player_type init_player(char username[], int id)
 {
     player_type player;
     strcpy(player.username, username);
     player.point = 0;
-    player.id = -1;
+    player.id = id;
     return player;
 }
 
@@ -84,6 +84,7 @@ waiting_room_type init_waiting_room()
 game_state_type init_game_state()
 {
     game_state_type game_state;
+
 
     // Sector description:
     // -1: Sub question (150 point)
