@@ -15,7 +15,7 @@
 client_room_type client_room;
 
 // Handle client tasks
-void *client_handle(void *);
+void *client_handle(void *arg);
 
 int main()
 {
@@ -100,20 +100,20 @@ int main()
         }
 
         // For each client's room, spawns a thread, and the thread handles the new client's room
-        // pthread_create(&tid, NULL, &client_handle, (void *)&client_room);
-        pthread_create(&tid, NULL, &client_handle, NULL);
+        pthread_create(&tid, NULL, &client_handle, (void *)&client_room);
+        // pthread_create(&tid, NULL, &client_handle, NULL);
     }
 }
 
-void *client_handle()
+void *client_handle(void *arg)
 {
 
     int i;
-    client_room_type client_room_t = copy_client_room(client_room);
+    client_room_type *client_room_t = (client_room_type *)arg;
     
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
-    printf("[THREAD} client_room joined: %d\n", client_room_t.joined);
+    printf("[THREAD} client_room joined: %d\n", client_room_t->joined);
 
     game_state_type game_state = init_game_state();
 
