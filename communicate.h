@@ -39,11 +39,11 @@ typedef struct conn_msg_type_t
 typedef struct client_room_type_t
 {
     int connfd[PLAYER_PER_ROOM];
-    int username[PLAYER_PER_ROOM][50];
+    char username[PLAYER_PER_ROOM][50];
     // status of client
     // 0: not ready, 1: ready, -1: AFK
     int status[PLAYER_PER_ROOM];
-    int slot;
+    int joined;
 } client_room_type;
 
 // Define function's prototype
@@ -52,6 +52,7 @@ void copy_player_type(player_type *dest, player_type src);
 void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
 void copy_game_state_type(game_state_type *dest, game_state_type src);
 client_room_type init_client_room();
+void send_all(client_room_type client_room, conn_msg_type conn_msg);
 
 // Define function's body
 
@@ -68,7 +69,7 @@ void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src)
     {
         copy_player_type(&dest->player[i], src.player[i]);
     }
-    dest->slot = src.slot;
+    dest->joined = src.joined;
 }
 
 void copy_game_state_type(game_state_type *dest, game_state_type src)
@@ -114,18 +115,33 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
         copy_game_state_type(&conn_msg.data.game, data.game);
         break;
     }
+    return conn_msg;
 }
 
 client_room_type init_client_room()
 {
     client_room_type client_room;
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    for (int i = 0; i < client_room.joined; i++)
     {
         client_room.connfd[i] = -1;
         client_room.status[i] = 0;
     }
-    client_room.slot = PLAYER_PER_ROOM;
+    client_room.joined = 0;
     return client_room;
+}
+
+void send_all(client_room_type client_room, conn_msg_type conn_msg)
+{
+    int bytes_sent;
+    for (int i = 0; i < client_room.joined; i++)
+    {
+        send(client_room.connfd[i], &conn_msg, sizeof(conn_msg), 0);
+        if (bytes_sent < 0)
+        {
+            perror("\nError:");
+            exit(1);
+        }
+    }
 }
 
 #endif

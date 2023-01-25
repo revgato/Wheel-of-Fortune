@@ -25,7 +25,8 @@ void print_waiting_room(waiting_room_type waiting_room)
 
     // Print waiting room
     printf("Waiting room:\n");
-    for (int i = 0; i < waiting_room.slot; i++)
+    printf("Waiting room joined: %d\n", waiting_room.joined);
+    for (int i = 0; i < waiting_room.joined; i++)
     {
         printf("Player %d: %s\n", i + 1, waiting_room.player[i].username);
     }
@@ -72,7 +73,9 @@ int main()
 
     printf("Connecting to server...\n");
     // Init communicate message
-    conn_msg_type conn_msg = make_conn_msg(JOIN, player);
+    conn_data_type conn_data;
+    copy_player_type(&conn_data.player, player);
+    conn_msg_type conn_msg = make_conn_msg(JOIN, conn_data);
 
     // Send message to server
     bytes_sent = send(client_sock, &conn_msg, sizeof(conn_msg), 0);
@@ -86,6 +89,7 @@ int main()
     // Step 4.2: Infinitely receive message from server
     while (1)
     {
+        printf("Waiting for server's response...\n");
         bytes_received = recv(client_sock, &conn_msg, sizeof(conn_msg), 0);
         if (bytes_received <= 0)
         {
@@ -102,7 +106,7 @@ int main()
             break;
         case WAITING_ROOM:
             // TODO: Handle waiting room message
-            print_waiting_room(conn_msg.waiting_room);
+            print_waiting_room(conn_msg.data.waiting_room);
             break;
         case GAME_STATE:
             // TODO: Handle game state message

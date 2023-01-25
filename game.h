@@ -20,7 +20,7 @@ typedef struct player_type_t
 typedef struct waiting_room_type_t
 {
     player_type player[PLAYER_PER_ROOM];
-    int slot;
+    int joined;
 } waiting_room_type;
 
 // Define structure of sub question
@@ -59,7 +59,7 @@ typedef struct game_state_type_t
 // Define function's prototype
 game_state_type init_game_state();
 waiting_room_type init_waiting_room();
-char* init_key();
+void init_key(char key[]);
 void init_crossword(char key[], char crossword[]);
 player_type init_player(char username[], int id);
 void get_sub_question(sub_question_type *sub_question);
@@ -77,7 +77,7 @@ player_type init_player(char username[], int id)
 waiting_room_type init_waiting_room()
 {
     waiting_room_type waiting_room;
-    waiting_room.slot = PLAYER_PER_ROOM;
+    waiting_room.joined = 0;
     return waiting_room;
 }
 
@@ -110,7 +110,7 @@ game_state_type init_game_state()
     game_state.sectors[14] = 200;
 
     // Init key
-    strcpy(game_state.key, init_key());
+    init_key(game_state.key);
 
     // Init crossword by binding key
     init_crossword(game_state.key, game_state.crossword);
@@ -122,7 +122,7 @@ game_state_type init_game_state()
 
 
 // Init key by random pick 1 line from key.txt
-char* init_key()
+void init_key(char key[])
 {
     FILE *f = fopen("key.txt", "r");
     if (f == NULL)
@@ -149,11 +149,10 @@ char* init_key()
     }
 
     // Get key
-    char key[50];
     fscanf(f, "%s", key);
     fclose(f);
 
-    return key;
+    return;
 }
 
 // Init crossword by binding key

@@ -20,6 +20,8 @@ int main()
     struct sockaddr_in server, *client; // Server's address information
     int sin_size;
     pthread_t tid;
+    int bytes_received, bytes_sent;
+    int current_joined;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     { /* calls sockets() */
@@ -50,20 +52,52 @@ int main()
     while (1)
     {
         client_room_type client_room = init_client_room();
+        waiting_room_type waiting_room = init_waiting_room();
+        current_joined = 0;
+
         // Waiting for client to connect (3 clients)
-        while (client_room.slot != 0)
+        while (current_joined < PLAYER_PER_ROOM)
         {
-            if ((client_room.connfd[client_room.slot - 1] = accept(listenfd, (struct sockaddr *)client, &sin_size)) == -1)
+            if ((client_room.connfd[current_joined] = accept(listenfd, (struct sockaddr *)client, &sin_size)) == -1)
                 perror("\nError: ");
             printf("You got a connection from %s\n", inet_ntoa((*client).sin_addr)); /* Print client's IP */
+
+            // Create new conn_msg variable
+            conn_msg_type conn_msg;
+
             // TODO: Receive username from client
+            bytes_received = recv(client_room.connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
+            if (bytes_received < 0)
+            {
+                perror("\nError: ");
+                return 0;
+            }
+            strcpy(client_room.username[current_joined], conn_msg.data.player.username);
+            strcpy(waiting_room.player[current_joined].username, conn_msg.data.player.username);
+
+            client_room.joined++;
+            waiting_room.joined++;
 
             // TODO: Send waiting room to client
+            copy_waiting_room_type(&conn_msg.data.waiting_room, waiting_room);
+            conn_msg = make_conn_msg(WAITING_ROOM, conn_msg.data);
+            // printf("Waiting room joined: %d\n", waiting_room.joined);
+            // bytes_sent = send(client_room.connfd[current_joined], &conn_msg, sizeof(conn_msg_type), 0);
+            send_all(client_room, conn_msg);
+            if (bytes_sent < 0)
+            {
+                perror("\nError: ");
+                return 0;
+            }
 
-            client_room.slot--;
+            current_joined++;
+            printf("Current joined: %d\n", current_joined);
+            printf("Waiting room joined: %d\n", waiting_room.joined);
+            printf("Client room joined: %d\n", client_room.joined);
         }
 
         // For each client's room, spawns a thread, and the thread handles the new client's room
+        printf("Create new thread\n");
         pthread_create(&tid, NULL, &client_handle, &client_room);
     }
 }
@@ -74,11 +108,15 @@ void *client_handle(void *arg)
     int bytes_sent, bytes_received;
     game_state_type game_state = init_game_state();
 
-
     // Init player
     for (int i = 0; i < PLAYER_PER_ROOM; i++)
     {
         game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
+    }
+
+    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        printf("Player %d: %s\n", i, game_state.player[i].username);
     }
 
     // 21/1/2023: Init player in game state
