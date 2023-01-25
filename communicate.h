@@ -23,7 +23,7 @@ typedef enum conn_msg_type_type_t
 // Define data of communicate message
 typedef union conn_data_type_t
 {
-    game_state_type game;
+    game_state_type game_state;
     player_type player;
     waiting_room_type waiting_room;
 } conn_data_type;
@@ -48,48 +48,14 @@ typedef struct client_room_type_t
 
 // Define function's prototype
 conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data);
-void copy_player_type(player_type *dest, player_type src);
-void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
-void copy_game_state_type(game_state_type *dest, game_state_type src);
+
 client_room_type *init_client_room();
 void send_all(client_room_type client_room, conn_msg_type conn_msg);
 // client_room_type copy_client_room(client_room_type client_room);
 
 // Define function's body
 
-void copy_player_type(player_type *dest, player_type src)
-{
-    strcpy(dest->username, src.username);
-    dest->point = src.point;
-    dest->id = src.id;
-}
 
-void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src)
-{
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
-    {
-        copy_player_type(&dest->player[i], src.player[i]);
-    }
-    dest->joined = src.joined;
-}
-
-void copy_game_state_type(game_state_type *dest, game_state_type src)
-{
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
-    {
-        copy_player_type(&dest->player[i], src.player[i]);
-    }
-    dest->turn = src.turn;
-    dest->guess_char = src.guess_char;
-    for (int i = 0; i < 15; i++)
-    {
-        dest->sectors[i] = src.sectors[i];
-    }
-    dest->sector = src.sector;
-    strcpy(dest->key, src.key);
-    strcpy(dest->crossword, src.crossword);
-    strcpy(dest->game_message, src.game_message);
-}
 
 conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
 {
@@ -104,16 +70,16 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
         copy_waiting_room_type(&conn_msg.data.waiting_room, data.waiting_room);
         break;
     // case START:
-    //     conn_msg.data.game = data.game;
+    //     conn_msg.data.game_state = data.game_state;
     //     break;
     // case POINT:
     //     conn_msg.data.player = data.player;
     //     break;
     case GAME_STATE:
-        copy_game_state_type(&conn_msg.data.game, data.game);
+        copy_game_state_type(&conn_msg.data.game_state, data.game_state);
         break;
     case GUESS_CHAR:
-        copy_game_state_type(&conn_msg.data.game, data.game);
+        copy_game_state_type(&conn_msg.data.game_state, data.game_state);
         break;
     }
     return conn_msg;

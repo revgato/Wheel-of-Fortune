@@ -33,6 +33,44 @@ void print_waiting_room(waiting_room_type waiting_room)
     printf("\n");
 }
 
+void print_game_state(game_state_type game_state)
+{
+    int i;
+    // Clear screen
+    printf("\033[2J");
+
+    // Print title
+    print_title();
+
+    // Print game state
+    printf("====================================\n\n");
+    printf("Game state:\n");
+
+    // Print player
+    for(i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        printf("Player %d: %s\n", i + 1, game_state.player[i].username);
+        printf("Point: %d\n", game_state.player[i].point);
+    }
+
+    // Print wheel
+    printf("Wheel:\n");
+    for(i = 0; i < 12; i++)
+    {
+        printf("%d ", game_state.wheel[i]);
+    }
+    printf("\n");
+
+    // Print crossword
+    printf("Crossword:\n");
+    printf("%s\n", game_state.crossword);
+
+    // Print key
+    printf("Key:\n");
+    printf("%s\n", game_state.key);
+
+}
+
 int main()
 {
     int client_sock;
@@ -109,6 +147,7 @@ int main()
             print_waiting_room(conn_msg.data.waiting_room);
             break;
         case GAME_STATE:
+            print_game_state(conn_msg.data.game_state);
             // TODO: Handle game state message
             break;
         }

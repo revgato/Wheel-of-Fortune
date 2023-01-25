@@ -43,7 +43,7 @@ typedef struct game_state_type_t
     // Current guess char
     char guess_char;
 
-    int sectors[15];
+    int wheel[15];
 
     // Current sector
     int sector;
@@ -64,6 +64,10 @@ void init_key(char key[]);
 void init_crossword(char key[], char crossword[]);
 player_type init_player(char username[], int id);
 void get_sub_question(sub_question_type *sub_question);
+
+void copy_player_type(player_type *dest, player_type src);
+void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
+void copy_game_state_type(game_state_type *dest, game_state_type src);
 
 // Function's body
 player_type init_player(char username[], int id)
@@ -93,22 +97,22 @@ game_state_type init_game_state()
     // -3: Bonus 200 point
     // Other: points
 
-    // Init sectors
-    game_state.sectors[0] = 100;
-    game_state.sectors[1] = 200;
-    game_state.sectors[2] = 400;
-    game_state.sectors[3] = 200;
-    game_state.sectors[4] = -1;
-    game_state.sectors[5] = 100;
-    game_state.sectors[6] = 200;
-    game_state.sectors[7] = 300;
-    game_state.sectors[8] = 100;
-    game_state.sectors[9] = -2;
-    game_state.sectors[10] = 200;
-    game_state.sectors[11] = 300;
-    game_state.sectors[12] = 100;
-    game_state.sectors[13] = -3;
-    game_state.sectors[14] = 200;
+    // Init wheel
+    game_state.wheel[0] = 100;
+    game_state.wheel[1] = 200;
+    game_state.wheel[2] = 400;
+    game_state.wheel[3] = 200;
+    game_state.wheel[4] = -1;
+    game_state.wheel[5] = 100;
+    game_state.wheel[6] = 200;
+    game_state.wheel[7] = 300;
+    game_state.wheel[8] = 100;
+    game_state.wheel[9] = -2;
+    game_state.wheel[10] = 200;
+    game_state.wheel[11] = 300;
+    game_state.wheel[12] = 100;
+    game_state.wheel[13] = -3;
+    game_state.wheel[14] = 200;
 
     // Init key
     init_key(game_state.key);
@@ -212,6 +216,40 @@ void get_sub_question(sub_question_type *sub_question)
     fscanf(f, "%[^\n]%*c", sub_question->answer[2]);
     fscanf(f, "%c%*c", &sub_question->key);
     fclose(f);
+}
+
+void copy_player_type(player_type *dest, player_type src)
+{
+    strcpy(dest->username, src.username);
+    dest->point = src.point;
+    dest->id = src.id;
+}
+
+void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src)
+{
+    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        copy_player_type(&dest->player[i], src.player[i]);
+    }
+    dest->joined = src.joined;
+}
+
+void copy_game_state_type(game_state_type *dest, game_state_type src)
+{
+    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        copy_player_type(&dest->player[i], src.player[i]);
+    }
+    dest->turn = src.turn;
+    dest->guess_char = src.guess_char;
+    for (int i = 0; i < 15; i++)
+    {
+        dest->wheel[i] = src.wheel[i];
+    }
+    dest->sector = src.sector;
+    strcpy(dest->key, src.key);
+    strcpy(dest->crossword, src.crossword);
+    strcpy(dest->game_message, src.game_message);
 }
 
 

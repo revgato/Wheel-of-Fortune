@@ -59,7 +59,7 @@ int main()
         current_joined = 0;
 
         // Waiting for client to connect (3 clients)
-        while (current_joined < PLAYER_PER_ROOM -2)
+        while (current_joined < PLAYER_PER_ROOM)
         {
             if ((client_room->connfd[current_joined] = accept(listenfd, (struct sockaddr *)client, &sin_size)) == -1)
                 perror("\nError: ");
@@ -109,27 +109,31 @@ void *client_handle(void *arg)
 {
 
     int i;
-    client_room_type client_room_t = *(client_room_type *)arg;
+    client_room_type client_room = *(client_room_type *)arg;
     free(arg);
     
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
-    printf("[THREAD} client_room joined: %d\n", client_room_t.joined);
 
     game_state_type game_state = init_game_state();
 
 
-    // // Init player
-    // for (i = 0; i < client_room.joined; i++)
-    // {
-    //     game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
-    // }
+    // Init player
+    for (i = 0; i < client_room.joined; i++)
+    {
+        game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
+    }
 
-    // for (i = 0; i < client_room.joined; i++)
-    // {
-    //     printf("Player %d: %s\n", i, game_state.player[i].username);
-    // }
+    for (i = 0; i < client_room.joined; i++)
+    {
+        printf("Player %d: %s\n", i, game_state.player[i].username);
+    }
 
     printf("Key: %s\nCrossword: %s\n", game_state.key, game_state.crossword);
+
+    // Try to send game state to all clients
+    copy_game_state_type(&conn_msg.data.game_state, game_state);
+    conn_msg = make_conn_msg(GAME_STATE, conn_msg.data);
+    send_all(client_room, conn_msg);
     pthread_exit(NULL);
 }
