@@ -11,6 +11,9 @@
 #include "game.h"
 #include "communicate.h"
 
+// Global variables
+client_room_type client_room;
+
 // Handle client tasks
 void *client_handle(void *);
 
@@ -56,7 +59,7 @@ int main()
         current_joined = 0;
 
         // Waiting for client to connect (3 clients)
-        while (current_joined < PLAYER_PER_ROOM)
+        while (current_joined < PLAYER_PER_ROOM -2)
         {
             if ((client_room.connfd[current_joined] = accept(listenfd, (struct sockaddr *)client, &sin_size)) == -1)
                 perror("\nError: ");
@@ -97,27 +100,35 @@ int main()
         }
 
         // For each client's room, spawns a thread, and the thread handles the new client's room
-        printf("Create new thread\n");
-        pthread_create(&tid, NULL, &client_handle, &client_room);
+        // pthread_create(&tid, NULL, &client_handle, (void *)&client_room);
+        pthread_create(&tid, NULL, &client_handle, NULL);
     }
 }
 
-void *client_handle(void *arg)
+void *client_handle()
 {
-    client_room_type client_room = *(client_room_type *)arg;
+
+    int i;
+    client_room_type client_room_t = copy_client_room(client_room);
+    
     int bytes_sent, bytes_received;
+    conn_msg_type conn_msg;
+    printf("[THREAD} client_room joined: %d\n", client_room_t.joined);
+
     game_state_type game_state = init_game_state();
 
-    // Init player
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
-    {
-        game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
-    }
 
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
-    {
-        printf("Player %d: %s\n", i, game_state.player[i].username);
-    }
+    // // Init player
+    // for (i = 0; i < client_room.joined; i++)
+    // {
+    //     game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
+    // }
 
-    // 21/1/2023: Init player in game state
+    // for (i = 0; i < client_room.joined; i++)
+    // {
+    //     printf("Player %d: %s\n", i, game_state.player[i].username);
+    // }
+
+    printf("Key: %s\nCrossword: %s\n", game_state.key, game_state.crossword);
+    pthread_exit(NULL);
 }

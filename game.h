@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define PLAYER_PER_ROOM 3
 
@@ -111,12 +112,14 @@ game_state_type init_game_state()
 
     // Init key
     init_key(game_state.key);
-
+    
     // Init crossword by binding key
     init_crossword(game_state.key, game_state.crossword);
 
     // Init turn, start from 1
     game_state.turn = 1;
+
+    return game_state;
 
 }
 
@@ -130,7 +133,6 @@ void init_key(char key[])
         printf("Error opening key.txt file!\n");
         exit(1);
     }
-
     // Get number of line in file
     int num_line = 0;
     char c;
@@ -139,17 +141,23 @@ void init_key(char key[])
             num_line = num_line + 1;
 
     // Random pick 1 line
+    srand(time(0));
     int random_line = rand() % num_line;
     int i = 0;
+
+    // Move f pointer to head of file
+    rewind(f);
+
+    // Move pointer to the key
     while (i < random_line)
     {
+        c = getc(f);
         if (c == '\n')
             i = i + 1;
-        c = getc(f);
     }
 
     // Get key
-    fscanf(f, "%s", key);
+    fscanf(f, "%[^\n]", key);
     fclose(f);
 
     return;
