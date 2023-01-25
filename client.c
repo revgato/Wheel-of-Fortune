@@ -9,6 +9,29 @@
 #include "game.h"
 #include "communicate.h"
 
+void print_title()
+{
+    printf("Wheel of Fortune\n");
+    printf("====================================\n\n");
+}
+
+void print_waiting_room(waiting_room_type waiting_room)
+{
+    // Clear screen
+    printf("\033[2J");
+
+    // Print title
+    print_title();
+
+    // Print waiting room
+    printf("Waiting room:\n");
+    for (int i = 0; i < waiting_room.slot; i++)
+    {
+        printf("Player %d: %s\n", i + 1, waiting_room.player[i].username);
+    }
+    printf("\n");
+}
+
 int main()
 {
     int client_sock;
@@ -79,10 +102,15 @@ int main()
             break;
         case WAITING_ROOM:
             // TODO: Handle waiting room message
+            print_waiting_room(conn_msg.waiting_room);
             break;
         case GAME_STATE:
             // TODO: Handle game state message
             break;
         }
     }
+
+    // Step 5: Close socket
+    close(client_sock);
+    return 0;
 }
