@@ -73,14 +73,14 @@ int main()
             // Create new conn_msg variable
             conn_msg_type conn_msg;
 
-            // TODO: Receive username from client
+            // Receive username from client
             bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
             if (bytes_received < 0)
             {
                 perror("\nError: ");
                 return 0;
             }
-            fflush(stdout);   
+            fflush(stdout);
             strcpy(client_room->username[current_joined], conn_msg.data.player.username);
             strcpy(waiting_room.player[current_joined].username, conn_msg.data.player.username);
 
@@ -90,7 +90,7 @@ int main()
             client_room->joined++;
             waiting_room.joined++;
 
-            // TODO: Send waiting room to client
+            // Send waiting room to client
             copy_waiting_room_type(&conn_msg.data.waiting_room, waiting_room);
             conn_msg = make_conn_msg(WAITING_ROOM, conn_msg.data);
             // printf("Waiting room joined: %d\n", waiting_room.joined);
@@ -121,13 +121,12 @@ void *client_handle(void *arg)
     client_room_type client_room = *(client_room_type *)arg;
     free(arg);
     int correct = 1;
-    char guess_char = '0';
-    
+    char guess_char;
+
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
 
     game_state_type game_state = init_game_state();
-
 
     // Init player
     for (i = 0; i < client_room.joined; i++)
@@ -150,7 +149,6 @@ void *client_handle(void *arg)
         for (i = 0; i < client_room.joined; i++)
         {
             printf("[DEBUG] Client %d status: %d\n", i, client_room.status[i]);
-            
         }
         // Check AFK
         if (is_all_afk(client_room))
@@ -175,24 +173,21 @@ void *client_handle(void *arg)
 
         // Receive player's guess
         printf("[DEBUG] Waiting for guess from %d\n", client_room.connfd[game_state.turn]);
-        // TRICK to ignore bug:
+
+        // TRICK to handle bug:
         // Check guess_char is alphabet or not
-        trick:
-        bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-        if (bytes_received < 0)
+        guess_char = '0';
+        while (!isalpha(guess_char))
         {
-            perror("\nError: ");
-            return 0;
+            bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
+            if (bytes_received < 0)
+            {
+                perror("\nError: ");
+                return 0;
+            }
+            // TODO: Handle AFK
+            guess_char = conn_msg.data.game_state.guess_char;
         }
-        // TODO: Handle AFK
-        guess_char = conn_msg.data.game_state.guess_char;
-        if (!isalpha(guess_char))
-        {
-            printf("[DEBUG] Guess is not alphabet\n");
-            goto trick;
-        }
-        printf("Guess received %d bytes\n", bytes_received);
-        fflush(stdout);   
 
         printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
 
@@ -200,19 +195,19 @@ void *client_handle(void *arg)
         printf("[DEBUG] Correct: %d\n", correct);
 
         // sector of wheel
-
     }
 
     pthread_exit(NULL);
 }
 
-
-int specify_turn(int turn, client_room_type client_room){
+int specify_turn(int turn, client_room_type client_room)
+{
 
     // Find next active player
     int current_turn = (turn + 1) % client_room.joined;
 
-    while (client_room.status[current_turn] != 1 && current_turn != turn){
+    while (client_room.status[current_turn] != 1 && current_turn != turn)
+    {
         // printf("[DEBUG] old_turn: %d, specify_turn: %d, connfd: %d\n", turn, current_turn, client_room.connfd[current_turn]);
         current_turn = (current_turn + 1) % client_room.joined;
     }
@@ -220,16 +215,17 @@ int specify_turn(int turn, client_room_type client_room){
     return current_turn;
 }
 
-
-int is_all_afk(client_room_type client_room){
+int is_all_afk(client_room_type client_room)
+{
 
     // Check if all players are afk
     int i;
-    for (i = 0; i < client_room.joined; i++){
-        if (client_room.status[i] == 1){
+    for (i = 0; i < client_room.joined; i++)
+    {
+        if (client_room.status[i] == 1)
+        {
             return 0;
         }
     }
     return 1;
 }
-

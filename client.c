@@ -8,6 +8,7 @@
 // #include <pthread.h>
 #include "game.h"
 #include "communicate.h"
+#include <ctype.h>
 
 conn_data_type conn_data;
 conn_msg_type conn_msg;
@@ -89,7 +90,14 @@ void handle_game_state(game_state_type *game_state)
     if (strcmp(game_state->player[game_state->turn].username, username) == 0)
     {
         printf("Please enter your guess: ");
-        scanf("%c%*c", &game_state->guess_char);
+
+        // Check guess_char is alphabet
+        game_state->guess_char = '0';
+        while (!isalpha(game_state->guess_char))
+        {
+            game_state->guess_char = getchar();
+            fflush(stdin);
+        }
     }
 
     // Send guess char to server
@@ -159,7 +167,7 @@ int main()
             close(client_sock);
             return 0;
         }
-        fflush(stdout);   
+        fflush(stdout);
 
         // Handle message from server
         switch (conn_msg.type)
