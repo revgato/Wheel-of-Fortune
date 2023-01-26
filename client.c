@@ -86,24 +86,39 @@ void handle_game_state(game_state_type *game_state)
     printf("[DEBUG] Current turn: %d\n", game_state->turn);
     printf("Current player: %s\n", game_state->player[game_state->turn].username);
 
-    // If it's my turn
-    if (strcmp(game_state->player[game_state->turn].username, username) == 0)
+    // Handle sector's case
+    switch (game_state->sector)
     {
-        printf("Please enter your guess: ");
-
-        // Check guess_char is alphabet
-        game_state->guess_char = '0';
-        while (!isalpha(game_state->guess_char))
+    case -1:
+        // TODO: Sub question
+        break;
+    case -2:
+        // Minus 150
+        break;
+    case -3:
+        // Bonus 200
+        break;
+    default:
+        // If it's my turn
+        if (strcmp(game_state->player[game_state->turn].username, username) == 0)
         {
-            game_state->guess_char = getchar();
-            fflush(stdin);
-        }
-    }
+            printf("Please enter your guess: ");
 
-    // Send guess char to server
-    copy_game_state_type(&conn_msg.data.game_state, *game_state);
-    conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);
-    send_server(client_sock, conn_msg);
+            // Check guess_char is alphabet
+            game_state->guess_char = '0';
+            while (!isalpha(game_state->guess_char))
+            {
+                fflush(stdin);
+                game_state->guess_char = getchar();
+            }
+            // Send guess char to server
+            copy_game_state_type(&conn_msg.data.game_state, *game_state);
+            conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);
+            send_server(client_sock, conn_msg);
+        }
+
+        break;
+    }
 }
 
 int main()

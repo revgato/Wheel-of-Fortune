@@ -165,6 +165,7 @@ void *client_handle(void *arg)
 
         // Set sector of wheel
         roll_wheel(&game_state);
+        printf("[DEBUG] Sector: %d\n", game_state.sector);
 
         // Send game state to all clients
         copy_game_state_type(&conn_msg.data.game_state, game_state);
@@ -179,9 +180,19 @@ void *client_handle(void *arg)
             break;
         case -2:
             // TODO: Minus 150
+            game_state.player[game_state.turn].point -= 150;
+            sprintf(game_state.game_message, "%s lost 150 points", game_state.player[game_state.turn].username);
+
+            // Current player's lost turn
+            correct = 0;
             break;
         case -3:
             // TODO: Bonus 200
+            game_state.player[game_state.turn].point += 200;
+            sprintf(game_state.game_message, "%s gained 200 points", game_state.player[game_state.turn].username);
+
+            // Current player's lost turn
+            correct = 0;
             break;
         default:
             // Receive player's guess

@@ -101,18 +101,34 @@ game_state_type init_game_state()
     // Other: points
 
     // Init wheel
-    game_state.wheel[0] = 100;
+    // game_state.wheel[0] = 100;
+    // game_state.wheel[1] = 200;
+    // game_state.wheel[2] = 400;
+    // game_state.wheel[3] = 200;
+    // game_state.wheel[4] = -1;
+    // game_state.wheel[5] = 100;
+    // game_state.wheel[6] = 200;
+    // game_state.wheel[7] = 300;
+    // game_state.wheel[8] = 100;
+    // game_state.wheel[9] = -2;
+    // game_state.wheel[10] = 200;
+    // game_state.wheel[11] = 300;
+    // game_state.wheel[12] = 100;
+    // game_state.wheel[13] = -3;
+    // game_state.wheel[14] = 200;
+
+    game_state.wheel[0] = -2;
     game_state.wheel[1] = 200;
-    game_state.wheel[2] = 400;
+    game_state.wheel[2] = -2;
     game_state.wheel[3] = 200;
-    game_state.wheel[4] = -1;
+    game_state.wheel[4] = -3;
     game_state.wheel[5] = 100;
-    game_state.wheel[6] = 200;
+    game_state.wheel[6] = -3;
     game_state.wheel[7] = 300;
     game_state.wheel[8] = 100;
     game_state.wheel[9] = -2;
     game_state.wheel[10] = 200;
-    game_state.wheel[11] = 300;
+    game_state.wheel[11] = -2;
     game_state.wheel[12] = 100;
     game_state.wheel[13] = -3;
     game_state.wheel[14] = 200;
@@ -285,7 +301,7 @@ int solve_crossword(game_state_type *game_state, char guess_char){
 
 void roll_wheel(game_state_type *game_state){
     // Random pick 1 number from wheel
-    srand(time(0));
+    // srand(time(0));
     int random_number = rand() % 15;
     game_state->sector = game_state->wheel[random_number];
     // sprintf(game_state->game_message, "The wheel stop at %d\n", game_state->sector);

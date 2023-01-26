@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "game.h"
 
-#define SERVER_PORT 5507
+#define SERVER_PORT 5508
 #define BUFF_SIZE 1024
 #define BACKLOG 30
 #define SERVER_ADDR "127.0.0.1"
