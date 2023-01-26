@@ -175,14 +175,13 @@ void *client_handle(void *arg)
         switch (game_state.sector)
         {
         case -1:
-        // TODO: Sub question
+            // TODO: Sub question
             break;
         case -2:
-        // TODO: Minus 150
+            // TODO: Minus 150
             break;
         case -3:
-        // TODO: Bonus 200
-        baodhosh
+            // TODO: Bonus 200
             break;
         default:
             // Receive player's guess
