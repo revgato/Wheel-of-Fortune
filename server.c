@@ -121,7 +121,7 @@ void *client_handle(void *arg)
     client_room_type client_room = *(client_room_type *)arg;
     free(arg);
     int correct = 1;
-    char guess_char;
+    char guess_char = '0';
     
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
