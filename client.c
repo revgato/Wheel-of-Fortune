@@ -9,6 +9,23 @@
 #include "game.h"
 #include "communicate.h"
 
+conn_data_type conn_data;
+conn_msg_type conn_msg;
+char username[50];
+char guess_char;
+int client_sock;
+
+void send_server(int connfd, conn_msg_type conn_msg)
+{
+    int bytes_sent;
+    bytes_sent = send(connfd, &conn_msg, sizeof(conn_msg), 0);
+    if (bytes_sent < 0)
+    {
+        printf("Error: Cannot send message to server!\n");
+        exit(1);
+    }
+}
+
 void print_title()
 {
     printf("Wheel of Fortune\n");
@@ -33,47 +50,56 @@ void print_waiting_room(waiting_room_type waiting_room)
     printf("\n");
 }
 
-void print_game_state(game_state_type game_state)
+void handle_game_state(game_state_type *game_state)
 {
     int i;
+    int bytes_sent;
     // Clear screen
-    printf("\033[2J");
+    // printf("\033[2J");
 
     // Print title
     print_title();
 
     // Print game state
     printf("====================================\n\n");
-    printf("Game state:\n");
+    printf("Game state:\n\n");
 
     // Print player
-    for(i = 0; i < PLAYER_PER_ROOM; i++)
+    for (i = 0; i < PLAYER_PER_ROOM; i++)
     {
-        printf("Player %d: %s\n", i + 1, game_state.player[i].username);
-        printf("Point: %d\n", game_state.player[i].point);
+        printf("Player %d: %s\n", i + 1, game_state->player[i].username);
+        printf("Point: %d\n\n", game_state->player[i].point);
     }
 
-    // Print wheel
-    printf("Wheel:\n");
-    for(i = 0; i < 12; i++)
-    {
-        printf("%d ", game_state.wheel[i]);
-    }
-    printf("\n");
+    // Print server's message
+    printf("Server's message: \n%s\n", game_state->game_message);
+
+    // Print sector
+    printf("Current sector: %d\n", game_state->sector);
 
     // Print crossword
     printf("Crossword:\n");
-    printf("%s\n", game_state.crossword);
+    printf("%s\n", game_state->crossword);
 
-    // Print key
-    printf("Key:\n");
-    printf("%s\n", game_state.key);
+    // Print current player
+    printf("[DEBUG] Current turn: %d\n", game_state->turn);
+    printf("Current player: %s\n", game_state->player[game_state->turn].username);
 
+    // If it's my turn
+    if (strcmp(game_state->player[game_state->turn].username, username) == 0)
+    {
+        printf("Please enter your guess: ");
+        scanf("%c%*c", &game_state->guess_char);
+    }
+
+    // Send guess char to server
+    copy_game_state_type(&conn_msg.data.game_state, *game_state);
+    conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);
+    send_server(client_sock, conn_msg);
 }
 
 int main()
 {
-    int client_sock;
     struct sockaddr_in server_addr;
     int bytes_sent, bytes_received, sin_size;
 
@@ -105,15 +131,13 @@ int main()
     printf("Welcome to Wheel of Fortune\n");
 
     printf("Please enter your username: ");
-    char username[50];
-    scanf("%s", username);
+    scanf("%s%*c", username);
     player_type player = init_player(username, -1);
 
     printf("Connecting to server...\n");
     // Init communicate message
-    conn_data_type conn_data;
     copy_player_type(&conn_data.player, player);
-    conn_msg_type conn_msg = make_conn_msg(JOIN, conn_data);
+    conn_msg = make_conn_msg(JOIN, conn_data);
 
     // Send message to server
     bytes_sent = send(client_sock, &conn_msg, sizeof(conn_msg), 0);
@@ -135,6 +159,7 @@ int main()
             close(client_sock);
             return 0;
         }
+        fflush(stdout);   
 
         // Handle message from server
         switch (conn_msg.type)
@@ -147,7 +172,7 @@ int main()
             print_waiting_room(conn_msg.data.waiting_room);
             break;
         case GAME_STATE:
-            print_game_state(conn_msg.data.game_state);
+            handle_game_state(&conn_msg.data.game_state);
             // TODO: Handle game state message
             break;
         }

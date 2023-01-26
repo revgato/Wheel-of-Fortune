@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "game.h"
 
-#define SERVER_PORT 5505
+#define SERVER_PORT 5507
 #define BUFF_SIZE 1024
 #define BACKLOG 30
 #define SERVER_ADDR "127.0.0.1"
@@ -103,6 +103,7 @@ void send_all(client_room_type client_room, conn_msg_type conn_msg)
     int bytes_sent;
     for (int i = 0; i < client_room.joined; i++)
     {
+        // printf("[DEBUG] Send to connfd: %d\n", client_room.connfd[i]);
         send(client_room.connfd[i], &conn_msg, sizeof(conn_msg), 0);
         if (bytes_sent < 0)
         {

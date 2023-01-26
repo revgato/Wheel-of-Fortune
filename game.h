@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-#define PLAYER_PER_ROOM 3
+#define PLAYER_PER_ROOM 2
 
 // Define structure of player
 typedef struct player_type_t
@@ -69,6 +69,9 @@ void copy_player_type(player_type *dest, player_type src);
 void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
 void copy_game_state_type(game_state_type *dest, game_state_type src);
 
+int solve_crossword(game_state_type *game_state, char guess_char);
+void roll_wheel(game_state_type *game_state);
+
 // Function's body
 player_type init_player(char username[], int id)
 {
@@ -120,8 +123,8 @@ game_state_type init_game_state()
     // Init crossword by binding key
     init_crossword(game_state.key, game_state.crossword);
 
-    // Init turn, start from 1
-    game_state.turn = 1;
+    // Init turn, start from 0
+    game_state.turn = 0;
 
     return game_state;
 
@@ -252,5 +255,40 @@ void copy_game_state_type(game_state_type *dest, game_state_type src)
     strcpy(dest->game_message, src.game_message);
 }
 
+int solve_crossword(game_state_type *game_state, char guess_char){
+
+    // Check if guess_char is in key
+    int i;
+    int is_in_key = 0;
+
+    for (i = 0; i < strlen(game_state->key); i++)
+    {
+        if (game_state->key[i] == guess_char)
+        {
+            is_in_key++;
+            game_state->crossword[i] = guess_char;
+        }
+    }
+
+    // If guess_char is in key, add point to this player
+    // Show message
+    if (is_in_key > 0){
+        game_state->player[game_state->turn].point += is_in_key * game_state->sector;
+        sprintf(game_state->game_message, "There are %d %c in the key. [%s] get %d points\n", 
+            is_in_key, guess_char, game_state->player[game_state->turn].username , is_in_key * game_state->sector);
+    }else{
+        sprintf(game_state->game_message, "There is no %c in the key.\n", guess_char);
+    }
+
+    return is_in_key;
+}
+
+void roll_wheel(game_state_type *game_state){
+    // Random pick 1 number from wheel
+    srand(time(0));
+    int random_number = rand() % 15;
+    game_state->sector = game_state->wheel[random_number];
+    // sprintf(game_state->game_message, "The wheel stop at %d\n", game_state->sector);
+}
 
 #endif

@@ -17,6 +17,10 @@ client_room_type client_room;
 // Handle client tasks
 void *client_handle(void *arg);
 
+int specify_turn(int turn, client_room_type client_room);
+
+int is_all_afk(client_room_type client_room);
+
 int main()
 {
     int listenfd, *connfd;
@@ -75,8 +79,12 @@ int main()
                 perror("\nError: ");
                 return 0;
             }
+            fflush(stdout);   
             strcpy(client_room->username[current_joined], conn_msg.data.player.username);
             strcpy(waiting_room.player[current_joined].username, conn_msg.data.player.username);
+
+            // Set active status
+            client_room->status[current_joined] = 1;
 
             client_room->joined++;
             waiting_room.joined++;
@@ -111,6 +119,7 @@ void *client_handle(void *arg)
     int i;
     client_room_type client_room = *(client_room_type *)arg;
     free(arg);
+    int correct = 1;
     
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
@@ -131,9 +140,84 @@ void *client_handle(void *arg)
 
     printf("Key: %s\nCrossword: %s\n", game_state.key, game_state.crossword);
 
-    // Try to send game state to all clients
-    copy_game_state_type(&conn_msg.data.game_state, game_state);
-    conn_msg = make_conn_msg(GAME_STATE, conn_msg.data);
-    send_all(client_room, conn_msg);
+    // Loop while crosswords are not solved
+    while (strcmp(game_state.crossword, game_state.key) != 0)
+    {
+        printf("\n\n\n");
+        // [DEBUG] print all client' status
+        for (i = 0; i < client_room.joined; i++)
+        {
+            printf("[DEBUG] Client %d status: %d\n", i, client_room.status[i]);
+            
+        }
+        // Check AFK
+        if (is_all_afk(client_room))
+        {
+            printf("All players are AFK\n");
+            break;
+        }
+        // Specify current player if previous player's guess is incorrect
+        if (correct == 0)
+        {
+            game_state.turn = specify_turn(game_state.turn, client_room);
+            printf("[DEBUG] Current turn: %s\n", game_state.player[game_state.turn].username);
+        }
+
+        // Set sector of wheel
+        roll_wheel(&game_state);
+
+        // Send game state to all clients
+        copy_game_state_type(&conn_msg.data.game_state, game_state);
+        conn_msg = make_conn_msg(GAME_STATE, conn_msg.data);
+        send_all(client_room, conn_msg);
+
+        // Receive player's guess
+        printf("[DEBUG] Waiting for guess from %d\n", client_room.connfd[game_state.turn]);
+        bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
+        if (bytes_received < 0)
+        {
+            perror("\nError: ");
+            return 0;
+        }
+        printf("Guess received %d bytes\n", bytes_received);
+        fflush(stdout);   
+
+        printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
+
+        correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
+        printf("[DEBUG] Correct: %d\n", correct);
+
+        // sector of wheel
+
+    }
+
     pthread_exit(NULL);
 }
+
+
+int specify_turn(int turn, client_room_type client_room){
+
+    // Find next active player
+    int current_turn = (turn + 1) % client_room.joined;
+
+    while (client_room.status[current_turn] != 1 && current_turn != turn){
+        // printf("[DEBUG] old_turn: %d, specify_turn: %d, connfd: %d\n", turn, current_turn, client_room.connfd[current_turn]);
+        current_turn = (current_turn + 1) % client_room.joined;
+    }
+
+    return current_turn;
+}
+
+
+int is_all_afk(client_room_type client_room){
+
+    // Check if all players are afk
+    int i;
+    for (i = 0; i < client_room.joined; i++){
+        if (client_room.status[i] == 1){
+            return 0;
+        }
+    }
+    return 1;
+}
+
