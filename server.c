@@ -10,6 +10,7 @@
 #include <pthread.h>
 #include "game.h"
 #include "communicate.h"
+#include <ctype.h>
 
 // Global variables
 client_room_type client_room;
@@ -120,6 +121,7 @@ void *client_handle(void *arg)
     client_room_type client_room = *(client_room_type *)arg;
     free(arg);
     int correct = 1;
+    char guess_char;
     
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
@@ -173,11 +175,21 @@ void *client_handle(void *arg)
 
         // Receive player's guess
         printf("[DEBUG] Waiting for guess from %d\n", client_room.connfd[game_state.turn]);
+        // TRICK to ignore bug:
+        // Check guess_char is alphabet or not
+        trick:
         bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
         if (bytes_received < 0)
         {
             perror("\nError: ");
             return 0;
+        }
+        // TODO: Handle AFK
+        guess_char = conn_msg.data.game_state.guess_char;
+        if (!isalpha(guess_char))
+        {
+            printf("[DEBUG] Guess is not alphabet\n");
+            goto trick;
         }
         printf("Guess received %d bytes\n", bytes_received);
         fflush(stdout);   
