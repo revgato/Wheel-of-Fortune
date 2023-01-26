@@ -171,28 +171,43 @@ void *client_handle(void *arg)
         conn_msg = make_conn_msg(GAME_STATE, conn_msg.data);
         send_all(client_room, conn_msg);
 
-        // Receive player's guess
-        printf("[DEBUG] Waiting for guess from %d\n", client_room.connfd[game_state.turn]);
-
-        // TRICK to handle bug:
-        // Check guess_char is alphabet or not
-        guess_char = '0';
-        while (!isalpha(guess_char))
+        // Handle sector's case
+        switch (game_state.sector)
         {
-            bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-            if (bytes_received < 0)
+        case -1:
+        // TODO: Sub question
+            break;
+        case -2:
+        // TODO: Minus 150
+            break;
+        case -3:
+        // TODO: Bonus 200
+            break;
+        default:
+            // Receive player's guess
+            printf("[DEBUG] Waiting for guess from %d\n", client_room.connfd[game_state.turn]);
+
+            // TRICK to handle bug:
+            // Check guess_char is alphabet or not
+            guess_char = '0';
+            while (!isalpha(guess_char))
             {
-                perror("\nError: ");
-                return 0;
+                bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
+                if (bytes_received < 0)
+                {
+                    perror("\nError: ");
+                    return 0;
+                }
+                // TODO: Handle AFK
+                guess_char = conn_msg.data.game_state.guess_char;
             }
-            // TODO: Handle AFK
-            guess_char = conn_msg.data.game_state.guess_char;
+
+            printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
+
+            correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
+            printf("[DEBUG] Correct: %d\n", correct);
+            break;
         }
-
-        printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
-
-        correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
-        printf("[DEBUG] Correct: %d\n", correct);
 
         // sector of wheel
     }
