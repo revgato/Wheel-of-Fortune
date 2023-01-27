@@ -145,6 +145,10 @@ void *client_handle(void *arg)
     // Loop while crosswords are not solved
     while (strcmp(game_state.crossword, game_state.key) != 0)
     {
+
+        // Clear previous game message
+        sprintf(game_state.game_message, "%s", "");
+
         printf("\n\n\n");
         // [DEBUG] print all client' status
         for (i = 0; i < client_room.joined; i++)
@@ -168,40 +172,58 @@ void *client_handle(void *arg)
         roll_wheel(&game_state);
         printf("[DEBUG] Sector: %d\n", game_state.sector);
 
-        // Send game state to all clients
-        copy_game_state_type(&conn_msg.data.game_state, game_state);
-        conn_msg = make_conn_msg(GAME_STATE, conn_msg.data);
-        send_all(client_room, conn_msg);
-
         // Handle sector's case
         switch (game_state.sector)
         {
         case -1:
+
             // TODO: Sub question
             get_sub_question(&game_state.sub_question);
-            
-            
+
+            // Send game state to all clients
+            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
+            send_all(client_room, conn_msg);
+
             // DEBUG: Current player's skip turn
             correct = 0;
-            
+
             break;
         case -2:
+
             // Minus 150
             game_state.player[game_state.turn].point -= 150;
             sprintf(game_state.game_message, "%s lost 150 points", game_state.player[game_state.turn].username);
+
+            // Send game notification to all clients
+            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
+            send_all(client_room, conn_msg);
 
             // Current player's lost turn
             correct = 0;
             break;
         case -3:
+
             // Bonus 200
             game_state.player[game_state.turn].point += 200;
             sprintf(game_state.game_message, "%s gained 200 points", game_state.player[game_state.turn].username);
+
+            // Send game notification to all clients
+            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
+            send_all(client_room, conn_msg);
 
             // Current player's lost turn
             correct = 0;
             break;
         default:
+
+            // Send game state to all clients
+            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            conn_msg = make_conn_msg(GAME_STATE, conn_msg.data);
+            send_all(client_room, conn_msg);
+
             // Receive player's guess
             printf("[DEBUG] Waiting for guess from %d\n", client_room.connfd[game_state.turn]);
 
@@ -224,6 +246,11 @@ void *client_handle(void *arg)
 
             correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
             printf("[DEBUG] Correct: %d\n", correct);
+
+            // Send game notification to all clients
+            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
+            send_all(client_room, conn_msg);
             break;
         }
 
