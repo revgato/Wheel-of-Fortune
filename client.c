@@ -33,6 +33,15 @@ void print_title()
     printf("====================================\n\n");
 }
 
+void print_sub_queestion(sub_question_type sub_question)
+{
+    printf("Sub question:\n");
+    printf("%s\n", sub_question.question);
+    printf("A. %s\n", sub_question.answer[0]);
+    printf("B. %s\n", sub_question.answer[1]);
+    printf("C. %s\n", sub_question.answer[2]);
+}
+
 void print_waiting_room(waiting_room_type waiting_room)
 {
     // Clear screen
@@ -91,6 +100,26 @@ void handle_game_state(game_state_type *game_state)
     {
     case -1:
         // TODO: Sub question
+        print_sub_question(game_state->sub_question);
+
+        // If it's my turn
+        if (strcmp(game_state->player[game_state->turn].username, username) == 0)
+        {
+            printf("Answer: ");
+
+            // Check guess_char is A, B, C
+            game_state->guess_char = '0';
+            while (game_state->guess_char != 'A' && game_state->guess_char != 'B' && game_state->guess_char != 'C')
+            {
+                fflush(stdin);
+                game_state->guess_char = toupper(getchar());
+            }
+            
+            // Send guess char to server
+            copy_game_state_type(&conn_msg.data.game_state, *game_state);
+            conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);
+            send_server(client_sock, conn_msg);
+        }
         break;
     case -2:
         // Minus 150
@@ -111,6 +140,9 @@ void handle_game_state(game_state_type *game_state)
                 fflush(stdin);
                 game_state->guess_char = getchar();
             }
+
+            game_state->guess_char = toupper(game_state->guess_char);
+            
             // Send guess char to server
             copy_game_state_type(&conn_msg.data.game_state, *game_state);
             conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);

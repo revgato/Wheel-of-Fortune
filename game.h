@@ -52,6 +52,9 @@ typedef struct game_state_type_t
     char key[50];
     char crossword[50];
 
+    // Sub question
+    sub_question_type sub_question;
+
     // Host's message
     char game_message[200];
 } game_state_type;
@@ -68,6 +71,7 @@ void get_sub_question(sub_question_type *sub_question);
 void copy_player_type(player_type *dest, player_type src);
 void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
 void copy_game_state_type(game_state_type *dest, game_state_type src);
+void copy_sub_question_type(sub_question_type *dest, sub_question_type src);
 
 int solve_crossword(game_state_type *game_state, char guess_char);
 void roll_wheel(game_state_type *game_state);
@@ -117,18 +121,18 @@ game_state_type init_game_state()
     // game_state.wheel[13] = -3;
     // game_state.wheel[14] = 200;
 
-    game_state.wheel[0] = -2;
+    game_state.wheel[0] = -1;
     game_state.wheel[1] = 200;
-    game_state.wheel[2] = -2;
+    game_state.wheel[2] = -1;
     game_state.wheel[3] = 200;
-    game_state.wheel[4] = -3;
+    game_state.wheel[4] = -1;
     game_state.wheel[5] = 100;
-    game_state.wheel[6] = -3;
+    game_state.wheel[6] = -1;
     game_state.wheel[7] = 300;
     game_state.wheel[8] = 100;
     game_state.wheel[9] = -2;
     game_state.wheel[10] = 200;
-    game_state.wheel[11] = -2;
+    game_state.wheel[11] = -1;
     game_state.wheel[12] = 100;
     game_state.wheel[13] = -3;
     game_state.wheel[14] = 200;
@@ -164,7 +168,7 @@ void init_key(char key[])
             num_line = num_line + 1;
 
     // Random pick 1 line
-    srand(time(0));
+    // srand(time(0));
     int random_line = rand() % num_line;
     int i = 0;
 
@@ -221,11 +225,15 @@ void get_sub_question(sub_question_type *sub_question)
     // Scale to divide by 4
     random_line = random_line - random_line % 5;
     int i = 0;
+
+    // Move f pointer to head of file
+    rewind(f);
+
     while (i < random_line)
     {
+        c = getc(f);
         if (c == '\n')
             i = i + 1;
-        c = getc(f);
     }
 
     // Get sub question
@@ -255,10 +263,13 @@ void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src)
 
 void copy_game_state_type(game_state_type *dest, game_state_type src)
 {
+    // Copy player
     for (int i = 0; i < PLAYER_PER_ROOM; i++)
     {
         copy_player_type(&dest->player[i], src.player[i]);
     }
+
+    // Copy wheel
     dest->turn = src.turn;
     dest->guess_char = src.guess_char;
     for (int i = 0; i < 15; i++)
@@ -266,9 +277,23 @@ void copy_game_state_type(game_state_type *dest, game_state_type src)
         dest->wheel[i] = src.wheel[i];
     }
     dest->sector = src.sector;
+
+    // Copy key and crossword
     strcpy(dest->key, src.key);
     strcpy(dest->crossword, src.crossword);
+
+    // Copy sub question
+    copy_sub_question_type(&dest->sub_question, src.sub_question);
+
     strcpy(dest->game_message, src.game_message);
+}
+
+void copy_sub_question_type(sub_question_type *dest, sub_question_type src){
+    strcpy(dest->question, src.question);
+    strcpy(dest->answer[0], src.answer[0]);
+    strcpy(dest->answer[1], src.answer[1]);
+    strcpy(dest->answer[2], src.answer[2]);
+    dest->key = src.key;
 }
 
 int solve_crossword(game_state_type *game_state, char guess_char){

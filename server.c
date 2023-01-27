@@ -118,6 +118,7 @@ void *client_handle(void *arg)
 {
 
     int i;
+    srand(time(0));
     client_room_type client_room = *(client_room_type *)arg;
     free(arg);
     int correct = 1;
@@ -177,9 +178,15 @@ void *client_handle(void *arg)
         {
         case -1:
             // TODO: Sub question
+            get_sub_question(&game_state.sub_question);
+            
+            
+            // DEBUG: Current player's skip turn
+            correct = 0;
+            
             break;
         case -2:
-            // TODO: Minus 150
+            // Minus 150
             game_state.player[game_state.turn].point -= 150;
             sprintf(game_state.game_message, "%s lost 150 points", game_state.player[game_state.turn].username);
 
@@ -187,7 +194,7 @@ void *client_handle(void *arg)
             correct = 0;
             break;
         case -3:
-            // TODO: Bonus 200
+            // Bonus 200
             game_state.player[game_state.turn].point += 200;
             sprintf(game_state.game_message, "%s gained 200 points", game_state.player[game_state.turn].username);
 
