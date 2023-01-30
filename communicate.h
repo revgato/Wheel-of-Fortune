@@ -54,6 +54,8 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data);
 
 client_room_type *init_client_room();
 void send_all(client_room_type client_room, conn_msg_type conn_msg);
+int check_afk(int bytes_communicate, client_room_type *client_room, int turn);
+
 // client_room_type copy_client_room(client_room_type client_room);
 
 // Define function's body
@@ -120,28 +122,23 @@ void send_all(client_room_type client_room, conn_msg_type conn_msg)
     int bytes_sent;
     for (int i = 0; i < client_room.joined; i++)
     {
+        if(client_room.status[i] != 1) continue;
         // printf("[DEBUG] Send to connfd: %d\n", client_room.connfd[i]);
-        send(client_room.connfd[i], &conn_msg, sizeof(conn_msg), 0);
-        if (bytes_sent < 0)
-        {
-            perror("\nError:");
-            exit(1);
-        }
+        bytes_sent = send(client_room.connfd[i], &conn_msg, sizeof(conn_msg), 0);
+        check_afk(bytes_sent, &client_room, i);
     }
 }
 
-// client_room_type copy_client_room(client_room_type client_room)
-// {
-//     printf("Client room joined in function: %d\n", client_room.joined);
-//     client_room_type new_client_room;
-//     for (int i = 0; i < PLAYER_PER_ROOM; i++)
-//     {
-//         new_client_room.connfd[i] = client_room.connfd[i];
-//         strcpy(new_client_room.username[i], client_room.username[i]);
-//         new_client_room.status[i] = client_room.status[i];
-//     }
-//     new_client_room.joined = client_room.joined;
-//     return new_client_room;
-// }
+int check_afk(int bytes_communicate, client_room_type *client_room, int turn)
+{
+    if (bytes_communicate <= 0)
+    {
+        printf("[DEBUG] Client [%s] AFK\n", client_room->username[turn]);
+        client_room->status[turn] = -1;
+        return 1;
+    }
+    return 0;
+};
+
 
 #endif

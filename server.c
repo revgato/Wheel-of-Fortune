@@ -24,6 +24,7 @@ int is_all_afk(client_room_type client_room);
 
 void summary(game_state_type *game_state);
 
+
 int main()
 {
     int listenfd, *connfd;
@@ -258,12 +259,21 @@ void *client_handle(void *arg)
             while (!isalpha(guess_char))
             {
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-                if (bytes_received < 0)
-                {
-                    perror("\nError: ");
-                    return 0;
-                }
                 // TODO: Handle AFK
+                if (check_afk(bytes_received, &client_room, game_state.turn)){
+                    // Send afk notification to all clients
+                    sprintf(game_state.game_message, "[%s] is AFK", game_state.player[game_state.turn].username); 
+                    copy_game_state_type(&conn_msg.data.game_state, game_state);
+                    conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
+                    send_all(client_room, conn_msg);
+
+                    // Skip this player's turn
+                    correct = 0;
+                    break;
+                }
+
+
+
                 guess_char = conn_msg.data.game_state.guess_char;
             }
 

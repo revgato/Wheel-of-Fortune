@@ -113,8 +113,8 @@ void handle_game_state(game_state_type *game_state)
         game_state->guess_char = '0';
         while (!isalpha(game_state->guess_char))
         {
-            fflush(stdin);
             game_state->guess_char = getchar();
+            fflush(stdin);
         }
 
         game_state->guess_char = toupper(game_state->guess_char);
@@ -135,6 +135,7 @@ char receive_answer()
         printf("Please enter your answer (A, B, C): ");
         fflush(stdin);
         answer = toupper(getchar());
+        fflush(stdin);
     }
     return answer;
 }
