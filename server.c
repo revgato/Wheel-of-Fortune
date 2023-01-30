@@ -95,6 +95,9 @@ int main(int argc, char *argv[])
             bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
             if (bytes_received < 0)
             {
+                // TODO: Fix bug here. When 1 client are joined room but
+                // another client afk when joining, the server will crash
+                
                 // perror("\nError: ");
                 // return 0;
                 continue;
