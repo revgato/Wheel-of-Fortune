@@ -22,6 +22,8 @@ int specify_turn(int turn, client_room_type client_room);
 
 int is_all_afk(client_room_type client_room);
 
+void summary(game_state_type *game_state);
+
 int main()
 {
     int listenfd, *connfd;
@@ -279,6 +281,11 @@ void *client_handle(void *arg)
 
         // sector of wheel
     }
+    summary(&game_state);
+    // Send game summary to all clients
+    copy_game_state_type(&conn_msg.data.game_state, game_state);
+    conn_msg = make_conn_msg(END_GAME, conn_msg.data);
+    send_all(client_room, conn_msg);
 
     pthread_exit(NULL);
 }
@@ -311,4 +318,23 @@ int is_all_afk(client_room_type client_room)
         }
     }
     return 1;
+}
+
+void summary(game_state_type *game_state){
+    // Write summary to game_state->game_message
+    int i;
+    char temp[100];
+    int max_point = 0;
+    int winner = 0;
+    sprintf(game_state->game_message, "Summary:\n");
+    for (i = 0; i < PLAYER_PER_ROOM; i++){
+        if (game_state->player[i].point > max_point){
+            max_point = game_state->player[i].point;
+            winner = i;
+        }
+        sprintf(temp, "%s: %d points\n", game_state->player[i].username, game_state->player[i].point);
+        strcat(game_state->game_message, temp);
+    }
+    sprintf(temp, "Winner: %s\n", game_state->player[i].username);
+    strcat(game_state->game_message, temp);
 }

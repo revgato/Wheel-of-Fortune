@@ -257,6 +257,11 @@ int main()
             // getchar();
             wait();
             break;
+
+        case END_GAME:
+            print_game_state(conn_msg.data.game_state);
+            wait();
+            return 0;
         }
     }
 

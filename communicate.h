@@ -19,7 +19,8 @@ typedef enum conn_msg_type_type_t
     GAME_STATE,
     GUESS_CHAR,
     NOTIFICATION,
-    SUB_QUESTION
+    SUB_QUESTION,
+    END_GAME
 } conn_msg_type_type;
 
 // Define data of communicate message
@@ -90,6 +91,10 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
         break;
 
     case SUB_QUESTION:
+        copy_game_state_type(&conn_msg.data.game_state, data.game_state);
+        break;
+
+    case END_GAME:
         copy_game_state_type(&conn_msg.data.game_state, data.game_state);
         break;
     
