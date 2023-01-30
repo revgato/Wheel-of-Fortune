@@ -31,6 +31,7 @@ typedef union conn_data_type_t
     player_type player;
     waiting_room_type waiting_room;
     char notification[300];
+    sub_question_type sub_question;
 } conn_data_type;
 
 // Define communicate message
@@ -95,7 +96,7 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
         break;
 
     case SUB_QUESTION:
-        copy_game_state_type(&conn_msg.data.game_state, data.game_state);
+        copy_sub_question_type(&conn_msg.data.sub_question, data.sub_question);
         break;
 
     case END_GAME:

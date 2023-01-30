@@ -27,9 +27,11 @@ typedef struct waiting_room_type_t
 // Define structure of sub question
 typedef struct sub_question_type_t
 {
+    char username[50];      // Username of player's turn
     char question[200];
     char answer[3][50];
     char key;
+    char guess;
 } sub_question_type;
 
 // Define structure of game state
@@ -53,7 +55,7 @@ typedef struct game_state_type_t
     char crossword[50];
 
     // Sub question
-    sub_question_type sub_question;
+    // sub_question_type sub_question;
 
     // Host's message
     char game_message[200];
@@ -66,7 +68,7 @@ waiting_room_type init_waiting_room();
 void init_key(char key[]);
 void init_crossword(char key[], char crossword[]);
 player_type init_player(char username[], int id);
-void get_sub_question(sub_question_type *sub_question);
+void get_sub_question(sub_question_type *sub_question, char username[]);
 
 void copy_player_type(player_type *dest, player_type src);
 void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
@@ -203,8 +205,10 @@ void init_crossword(char key[], char crossword[])
 }
 
 // Get sub question by random pick 1 question from sub_question.txt
-void get_sub_question(sub_question_type *sub_question)
+void get_sub_question(sub_question_type *sub_question, char username[])
 {
+    sub_question->guess = '0';
+    strcpy(sub_question->username, username);
     FILE *f = fopen("sub_question.txt", "r");
     if (f == NULL)
     {
@@ -281,8 +285,6 @@ void copy_game_state_type(game_state_type *dest, game_state_type src)
     strcpy(dest->key, src.key);
     strcpy(dest->crossword, src.crossword);
 
-    // Copy sub question
-    copy_sub_question_type(&dest->sub_question, src.sub_question);
 
     strcpy(dest->game_message, src.game_message);
 }
@@ -293,6 +295,8 @@ void copy_sub_question_type(sub_question_type *dest, sub_question_type src){
     strcpy(dest->answer[1], src.answer[1]);
     strcpy(dest->answer[2], src.answer[2]);
     dest->key = src.key;
+    dest->guess = src.guess;
+    strcpy(dest->username, src.username);
 }
 
 int solve_crossword(game_state_type *game_state, char guess_char){

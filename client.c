@@ -43,6 +43,9 @@ void print_title()
 
 void print_sub_question(sub_question_type sub_question)
 {
+    // Clear screen
+    printf("\033[2J");
+    
     printf("Sub question:\n");
     printf("%s\n", sub_question.question);
     printf("A. %s\n", sub_question.answer[0]);
@@ -148,21 +151,20 @@ char receive_answer()
     return answer;
 }
 
-void handle_sub_question(game_state_type *game_state)
+void handle_sub_question(sub_question_type *sub_question)
 {
     int i;
     int bytes_sent;
-    print_game_state(*game_state);
-    print_sub_question(game_state->sub_question);
+    print_sub_question(*sub_question);
 
     // If it's my turn
-    if (strcmp(game_state->player[game_state->turn].username, username) == 0)
+    if (strcmp(sub_question->username, username) == 0)
     {
         // Send answer to server
         // printf("[DEBUG] Received answer: %c\n", game_state->sub_question.key);
-        game_state->guess_char = receive_answer();
+        sub_question->guess = receive_answer();
         // printf("[DEBUG] Answer: %c\n", game_state->guess_char);
-        copy_game_state_type(&conn_msg.data.game_state, *game_state);
+        copy_sub_question_type(&conn_msg.data.sub_question, *sub_question);
         conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
         send_server(client_sock, conn_msg);
     }
@@ -265,7 +267,7 @@ int main(int argc, char *argv[])
             // wait();
             break;
         case SUB_QUESTION:
-            handle_sub_question(&conn_msg.data.game_state);
+            handle_sub_question(&conn_msg.data.sub_question);
             // printf("Press any key to continue...");
             // getchar();
             // wait();

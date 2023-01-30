@@ -198,21 +198,11 @@ void *client_handle(void *arg)
         case -1:
 
             // TODO: Sub question
-            get_sub_question(&game_state.sub_question);
+            get_sub_question(&conn_msg.data.sub_question, game_state.player[game_state.turn].username);
 
-            // Send game state to all clients
-            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            // Send sub question to all clients
             conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
             send_all(client_room, conn_msg);
-
-            // // Receive answer from current player
-            // bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-            // if (check_afk(bytes_received, &client_room, game_state.turn)){
-            //     // Send afk notification to all client
-            //     sprintf(conn_msg.data.notification, "[%s] is AFK!\n", game_state.player[game_state.turn].username);
-            //     // Skip to next player's turn
-            //     correct = 0;
-            // }
 
             // TRICK to handle bug:
             // Check guess_char is alphabet or not
@@ -236,7 +226,7 @@ void *client_handle(void *arg)
                     break;
                 }
 
-                guess_char = conn_msg.data.game_state.guess_char;
+                guess_char = conn_msg.data.sub_question.guess;
             }
 
             if (is_afk){
@@ -245,7 +235,7 @@ void *client_handle(void *arg)
 
             // Check answer, if correct, add 200 points to current player
             
-            if (conn_msg.data.game_state.guess_char == game_state.sub_question.key){
+            if (conn_msg.data.sub_question.guess == conn_msg.data.sub_question.key){
                 game_state.player[game_state.turn].point += 200;
                 sprintf(conn_msg.data.notification, "Correct answer! [%s] gained 200 points", game_state.player[game_state.turn].username);
                 correct = 1;
