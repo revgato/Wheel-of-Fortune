@@ -93,16 +93,11 @@ int main(int argc, char *argv[])
 
             // Receive username from client
             bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
-            if (bytes_received < 0)
+            if (bytes_received <= 0)
             {
-                // TODO: Fix bug here. When 1 client are joined room but
-                // another client afk when joining, the server will crash
-                
-                // perror("\nError: ");
-                // return 0;
                 continue;
             }
-
+            printf("Waiting room: received %d bytes\n", bytes_received);
             fflush(stdout);
             strcpy(client_room->username[current_joined], conn_msg.data.player.username);
             strcpy(waiting_room.player[current_joined].username, conn_msg.data.player.username);
@@ -143,6 +138,7 @@ void *client_handle(void *arg)
     int i;
     srand(time(0));
     client_room_type client_room = *(client_room_type *)arg;
+
     free(arg);
     int correct = 1;
     char guess_char;
