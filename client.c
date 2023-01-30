@@ -126,6 +126,44 @@ void handle_game_state(game_state_type *game_state)
     }
 }
 
+char receive_answer()
+{
+    char answer = '0';
+    // Check answer is A, B, C
+    while (answer != 'A' && answer != 'B' && answer != 'C')
+    {
+        printf("Please enter your answer (A, B, C): ");
+        fflush(stdin);
+        answer = toupper(getchar());
+    }
+    return answer;
+}
+
+void handle_sub_question(game_state_type *game_state)
+{
+    int i;
+    int bytes_sent;
+    print_game_state(*game_state);
+    print_sub_question(game_state->sub_question);
+
+    // If it's my turn
+    if (strcmp(game_state->player[game_state->turn].username, username) == 0)
+    {
+        // Send answer to server
+        // printf("[DEBUG] Received answer: %c\n", game_state->sub_question.key);
+        game_state->guess_char = receive_answer();
+        // printf("[DEBUG] Answer: %c\n", game_state->guess_char);
+        copy_game_state_type(&conn_msg.data.game_state, *game_state);
+        conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
+        send_server(client_sock, conn_msg);
+    }
+}
+
+void wait()
+{
+    sleep(5);
+}
+
 int main()
 {
     struct sockaddr_in server_addr;
@@ -192,32 +230,32 @@ int main()
         // Handle message from server
         switch (conn_msg.type)
         {
-        case JOIN:
-            // TODO: Handle join message
-            break;
         case WAITING_ROOM:
             // TODO: Handle waiting room message
             print_waiting_room(conn_msg.data.waiting_room);
+            wait();
+
             break;
         case GAME_STATE:
             handle_game_state(&conn_msg.data.game_state);
-            printf("Press any key to continue...");
-            getchar();
-            // TODO: Handle game state message
+            // printf("Press any key to continue...");
+            // getchar();
+            wait();
             break;
         case SUB_QUESTION:
-            print_game_state(conn_msg.data.game_state);
-            print_sub_question(conn_msg.data.game_state.sub_question);
+            handle_sub_question(&conn_msg.data.game_state);
+            // printf("Press any key to continue...");
+            // getchar();
+            wait();
 
-            printf("Press any key to continue...");
-            getchar();
             break;
 
         case NOTIFICATION:
             print_game_state(conn_msg.data.game_state);
 
-            printf("Press any key to continue...");
-            getchar();
+            // printf("Press any key to continue...");
+            // getchar();
+            wait();
             break;
         }
     }

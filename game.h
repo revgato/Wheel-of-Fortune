@@ -97,7 +97,6 @@ game_state_type init_game_state()
 {
     game_state_type game_state;
 
-
     // Sector description:
     // -1: Sub question (150 point)
     // -2: Minus 150 point

@@ -185,8 +185,31 @@ void *client_handle(void *arg)
             conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
             send_all(client_room, conn_msg);
 
-            // DEBUG: Current player's skip turn
-            correct = 0;
+            // Receive answer from current player
+            bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
+            if (bytes_received < 0)
+            {
+                perror("\nError: ");
+                return 0;
+            }
+
+            // Check answer, if correct, add 200 points to current player
+            
+            if (conn_msg.data.game_state.guess_char == game_state.sub_question.key){
+                game_state.player[game_state.turn].point += 200;
+                sprintf(game_state.game_message, "Correct answer! [%s] gained 200 points", game_state.player[game_state.turn].username);
+                correct = 1;
+            }
+            else{
+                game_state.player[game_state.turn].point -= 100;
+                sprintf(game_state.game_message, "Wrong answer! [%s] lost 100 points", game_state.player[game_state.turn].username);
+                correct = 0;
+            }
+
+            // Send game notification to all clients
+            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
+            send_all(client_room, conn_msg);
 
             break;
         case -2:
@@ -247,7 +270,7 @@ void *client_handle(void *arg)
             correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
             printf("[DEBUG] Correct: %d\n", correct);
 
-            // Send game notification to all clients
+            // Send result to all clients
             copy_game_state_type(&conn_msg.data.game_state, game_state);
             conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
             send_all(client_room, conn_msg);
