@@ -165,6 +165,14 @@ void wait()
     sleep(5);
 }
 
+void print_notification(char *notification)
+{
+    // Clear screen
+    printf("\033[2J");
+    printf("====================================\n\n");
+    printf("%s\n", notification);
+}
+
 int main()
 {
     struct sockaddr_in server_addr;
@@ -226,6 +234,7 @@ int main()
             close(client_sock);
             return 0;
         }
+        wait();
         fflush(stdout);
 
         // Handle message from server
@@ -234,29 +243,29 @@ int main()
         case WAITING_ROOM:
             // TODO: Handle waiting room message
             print_waiting_room(conn_msg.data.waiting_room);
-            wait();
+            // wait();
 
             break;
         case GAME_STATE:
             handle_game_state(&conn_msg.data.game_state);
             // printf("Press any key to continue...");
             // getchar();
-            wait();
+            // wait();
             break;
         case SUB_QUESTION:
             handle_sub_question(&conn_msg.data.game_state);
             // printf("Press any key to continue...");
             // getchar();
-            wait();
+            // wait();
 
             break;
 
         case NOTIFICATION:
-            print_game_state(conn_msg.data.game_state);
+            print_notification(conn_msg.data.notification);
 
             // printf("Press any key to continue...");
             // getchar();
-            wait();
+            // wait();
             break;
 
         case END_GAME:

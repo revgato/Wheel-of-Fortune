@@ -126,6 +126,7 @@ void *client_handle(void *arg)
     free(arg);
     int correct = 1;
     char guess_char;
+    int is_afk = 0;
 
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
@@ -188,29 +189,55 @@ void *client_handle(void *arg)
             conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
             send_all(client_room, conn_msg);
 
-            // Receive answer from current player
-            bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-            if (bytes_received < 0)
+            // // Receive answer from current player
+            // bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
+            // if (check_afk(bytes_received, &client_room, game_state.turn)){
+            //     // Send afk notification to all client
+            //     sprintf(conn_msg.data.notification, "[%s] is AFK!\n", game_state.player[game_state.turn].username);
+            //     // Skip to next player's turn
+            //     correct = 0;
+            // }
+
+            // TRICK to handle bug:
+            // Check guess_char is alphabet or not
+            guess_char = '0';
+            while (!isalpha(guess_char))
             {
-                perror("\nError: ");
-                return 0;
+                bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
+                // TODO: Handle AFK
+                if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
+                    // Send afk notification to all clients
+                    sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
+                    conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
+                    send_all(client_room, conn_msg);
+
+                    // Skip this player's turn
+                    correct = 0;
+                    break;
+                }
+
+                guess_char = conn_msg.data.game_state.guess_char;
+            }
+
+            if (is_afk){
+                break;
             }
 
             // Check answer, if correct, add 200 points to current player
             
             if (conn_msg.data.game_state.guess_char == game_state.sub_question.key){
                 game_state.player[game_state.turn].point += 200;
-                sprintf(game_state.game_message, "Correct answer! [%s] gained 200 points", game_state.player[game_state.turn].username);
+                sprintf(conn_msg.data.notification, "Correct answer! [%s] gained 200 points", game_state.player[game_state.turn].username);
                 correct = 1;
             }
             else{
                 game_state.player[game_state.turn].point -= 100;
-                sprintf(game_state.game_message, "Wrong answer! [%s] lost 100 points", game_state.player[game_state.turn].username);
+                sprintf(conn_msg.data.notification, "Wrong answer! [%s] lost 100 points", game_state.player[game_state.turn].username);
                 correct = 0;
             }
 
             // Send game notification to all clients
-            copy_game_state_type(&conn_msg.data.game_state, game_state);
+        
             conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
             send_all(client_room, conn_msg);
 
@@ -219,10 +246,10 @@ void *client_handle(void *arg)
 
             // Minus 150
             game_state.player[game_state.turn].point -= 150;
-            sprintf(game_state.game_message, "%s lost 150 points", game_state.player[game_state.turn].username);
+            
+            sprintf(conn_msg.data.notification, "Unlucky! %s lost 150 points", game_state.player[game_state.turn].username);
 
             // Send game notification to all clients
-            copy_game_state_type(&conn_msg.data.game_state, game_state);
             conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
             send_all(client_room, conn_msg);
 
@@ -233,10 +260,9 @@ void *client_handle(void *arg)
 
             // Bonus 200
             game_state.player[game_state.turn].point += 200;
-            sprintf(game_state.game_message, "%s gained 200 points", game_state.player[game_state.turn].username);
+            sprintf(conn_msg.data.notification, "Lucky! %s gained 200 points", game_state.player[game_state.turn].username);
 
             // Send game notification to all clients
-            copy_game_state_type(&conn_msg.data.game_state, game_state);
             conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
             send_all(client_room, conn_msg);
 
@@ -260,10 +286,9 @@ void *client_handle(void *arg)
             {
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
                 // TODO: Handle AFK
-                if (check_afk(bytes_received, &client_room, game_state.turn)){
+                if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
                     // Send afk notification to all clients
-                    sprintf(game_state.game_message, "[%s] is AFK", game_state.player[game_state.turn].username); 
-                    copy_game_state_type(&conn_msg.data.game_state, game_state);
+                    sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
                     conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
                     send_all(client_room, conn_msg);
 
@@ -272,18 +297,19 @@ void *client_handle(void *arg)
                     break;
                 }
 
-
-
                 guess_char = conn_msg.data.game_state.guess_char;
             }
 
+            if (is_afk){
+                break;
+            }
             printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
 
             correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
             printf("[DEBUG] Correct: %d\n", correct);
 
             // Send result to all clients
-            copy_game_state_type(&conn_msg.data.game_state, game_state);
+            sprintf(conn_msg.data.notification, "%s\n", game_state.game_message);
             conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
             send_all(client_room, conn_msg);
             break;

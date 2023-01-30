@@ -29,6 +29,7 @@ typedef union conn_data_type_t
     game_state_type game_state;
     player_type player;
     waiting_room_type waiting_room;
+    char notification[300];
 } conn_data_type;
 
 // Define communicate message
@@ -85,7 +86,7 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
         break;
     
     case NOTIFICATION:
-        copy_game_state_type(&conn_msg.data.game_state, data.game_state);
+        strcpy(conn_msg.data.notification, data.notification);
         break;
         
     case GUESS_CHAR:
