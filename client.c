@@ -16,10 +16,18 @@ char username[50];
 char guess_char;
 int client_sock;
 
+
+void wait()
+{
+    sleep(2);
+}
+
 void send_server(int connfd, conn_msg_type conn_msg)
 {
     int bytes_sent;
     bytes_sent = send(connfd, &conn_msg, sizeof(conn_msg), 0);
+    printf("[DEBUG] Send %d bytes\n", bytes_sent);
+    wait();
     if (bytes_sent < 0)
     {
         printf("Error: Cannot send message to server!\n");
@@ -160,10 +168,6 @@ void handle_sub_question(game_state_type *game_state)
     }
 }
 
-void wait()
-{
-    sleep(5);
-}
 
 void print_notification(char *notification)
 {
@@ -173,8 +177,13 @@ void print_notification(char *notification)
     printf("%s\n", notification);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 3)
+    {
+        printf("Usage: %s <Server IP> <Server Port>\n", argv[0]);
+        return 0;
+    }
     struct sockaddr_in server_addr;
     int bytes_sent, bytes_received, sin_size;
 
@@ -189,9 +198,9 @@ int main()
     // Step 2: Define the address of the server
     bzero(&server_addr, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
-    server_addr.sin_addr.s_addr = inet_addr(SERVER_ADDR);
-    printf("Server IP: %s - Port: %d\n", SERVER_ADDR, SERVER_PORT);
+    server_addr.sin_port = htons(atoi(argv[2]));
+    server_addr.sin_addr.s_addr = inet_addr(argv[1]);
+    printf("Server IP: %s - Port: %d\n", argv[1], atoi(argv[2]));
 
     // Step 3: Request to connect server
     if (connect(client_sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) < 0)
@@ -228,13 +237,16 @@ int main()
     {
         printf("Waiting for server's response...\n");
         bytes_received = recv(client_sock, &conn_msg, sizeof(conn_msg), 0);
+        printf("[DEBUG] Received %d bytes\n", bytes_received);
+        wait();
         if (bytes_received <= 0)
         {
-            perror("\nError: ");
+            // perror("\nError: ");
+            printf("Lost server's connection\n");
             close(client_sock);
             return 0;
         }
-        wait();
+
         fflush(stdout);
 
         // Handle message from server

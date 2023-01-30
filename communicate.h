@@ -4,10 +4,11 @@
 #include <stdlib.h>
 #include "game.h"
 
-#define SERVER_PORT 5509
+#define SERVER_PORT 5513
 #define BUFF_SIZE 1024
 #define BACKLOG 30
-#define SERVER_ADDR "127.0.0.1"
+// #define SERVER_ADDR "127.0.0.1"
+#define WAIT_TIME 15
 
 // Define communicate message
 typedef enum conn_msg_type_type_t
@@ -136,6 +137,9 @@ int check_afk(int bytes_communicate, client_room_type *client_room, int turn)
     {
         printf("[DEBUG] Client [%s] AFK\n", client_room->username[turn]);
         client_room->status[turn] = -1;
+
+        // Close connection to this client
+        close(client_room->connfd[turn]);
         return 1;
     }
     return 0;

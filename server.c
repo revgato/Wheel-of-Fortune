@@ -25,8 +25,14 @@ int is_all_afk(client_room_type client_room);
 void summary(game_state_type *game_state);
 
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc != 2)
+    {
+        printf("Usage: %s <Server Port>\n", argv[0]);
+        return 0;
+    }
+
     int listenfd, *connfd;
     struct sockaddr_in server, *client; // Server's address information
     int sin_size;
@@ -40,9 +46,14 @@ int main()
         return 0;
     }
 
+    // Set client waiting time
+    struct timeval timeout;
+    timeout.tv_sec = WAIT_TIME;
+    timeout.tv_usec = 0;
+
     bzero(&server, sizeof(server));
     server.sin_family = AF_INET;
-    server.sin_port = htons(SERVER_PORT);
+    server.sin_port = htons(atoi(argv[1]));
     server.sin_addr.s_addr = htonl(INADDR_ANY); /* INADDR_ANY puts your IP address automatically */
 
     if (bind(listenfd, (struct sockaddr *)&server, sizeof(server)) == -1)
@@ -73,6 +84,10 @@ int main()
                 perror("\nError: ");
             printf("You got a connection from %s\n", inet_ntoa((*client).sin_addr)); /* Print client's IP */
 
+            // Set waiting time for this client
+            setsockopt(client_room->connfd[current_joined], SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
+
+
             // Create new conn_msg variable
             conn_msg_type conn_msg;
 
@@ -80,9 +95,11 @@ int main()
             bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
             if (bytes_received < 0)
             {
-                perror("\nError: ");
-                return 0;
+                // perror("\nError: ");
+                // return 0;
+                continue;
             }
+
             fflush(stdout);
             strcpy(client_room->username[current_joined], conn_msg.data.player.username);
             strcpy(waiting_room.player[current_joined].username, conn_msg.data.player.username);
@@ -206,6 +223,10 @@ void *client_handle(void *arg)
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
                 // TODO: Handle AFK
                 if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
+
+                    // // Close connection to this client
+                    // close(client_room.connfd[game_state.turn]);
+
                     // Send afk notification to all clients
                     sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
                     conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
@@ -287,6 +308,10 @@ void *client_handle(void *arg)
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
                 // TODO: Handle AFK
                 if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
+
+                    // // Close connection to this client
+                    // close(client_room.connfd[game_state.turn]);
+
                     // Send afk notification to all clients
                     sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
                     conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
@@ -371,6 +396,6 @@ void summary(game_state_type *game_state){
         sprintf(temp, "%s: %d points\n", game_state->player[i].username, game_state->player[i].point);
         strcat(game_state->game_message, temp);
     }
-    sprintf(temp, "Winner: %s\n", game_state->player[i].username);
+    sprintf(temp, "Winner: %s\n", game_state->player[winner].username);
     strcat(game_state->game_message, temp);
 }
