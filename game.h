@@ -107,37 +107,37 @@ game_state_type init_game_state()
     // Other: points
 
     // Init wheel
-    // game_state.wheel[0] = 100;
-    // game_state.wheel[1] = 200;
-    // game_state.wheel[2] = 400;
-    // game_state.wheel[3] = 200;
-    // game_state.wheel[4] = -1;
-    // game_state.wheel[5] = 100;
-    // game_state.wheel[6] = 200;
-    // game_state.wheel[7] = 300;
-    // game_state.wheel[8] = 100;
-    // game_state.wheel[9] = -2;
-    // game_state.wheel[10] = 200;
-    // game_state.wheel[11] = 300;
-    // game_state.wheel[12] = 100;
-    // game_state.wheel[13] = -3;
-    // game_state.wheel[14] = 200;
-
-    game_state.wheel[0] = -1;
+    game_state.wheel[0] = 100;
     game_state.wheel[1] = 200;
-    game_state.wheel[2] = -1;
+    game_state.wheel[2] = 400;
     game_state.wheel[3] = 200;
-    game_state.wheel[4] = -2;
+    game_state.wheel[4] = -1;
     game_state.wheel[5] = 100;
-    game_state.wheel[6] = -2;
+    game_state.wheel[6] = 200;
     game_state.wheel[7] = 300;
-    game_state.wheel[8] = -2;
+    game_state.wheel[8] = 100;
     game_state.wheel[9] = -2;
     game_state.wheel[10] = 200;
-    game_state.wheel[11] = -1;
+    game_state.wheel[11] = 300;
     game_state.wheel[12] = 100;
     game_state.wheel[13] = -3;
     game_state.wheel[14] = 200;
+
+    // game_state.wheel[0] = -1;
+    // game_state.wheel[1] = 200;
+    // game_state.wheel[2] = -1;
+    // game_state.wheel[3] = 200;
+    // game_state.wheel[4] = -2;
+    // game_state.wheel[5] = 100;
+    // game_state.wheel[6] = -2;
+    // game_state.wheel[7] = 300;
+    // game_state.wheel[8] = -2;
+    // game_state.wheel[9] = -2;
+    // game_state.wheel[10] = 200;
+    // game_state.wheel[11] = -1;
+    // game_state.wheel[12] = 100;
+    // game_state.wheel[13] = -3;
+    // game_state.wheel[14] = 200;
 
     // Init key
     init_key(game_state.key);

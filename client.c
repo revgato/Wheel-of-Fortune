@@ -21,161 +21,26 @@ void wait()
     sleep(2);
 }
 
-void send_server(int connfd, conn_msg_type conn_msg)
-{
-    int bytes_sent;
-    bytes_sent = send(connfd, &conn_msg, sizeof(conn_msg), 0);
-    printf("[DEBUG] Send %d bytes\n", bytes_sent);
-    wait();
-    if (bytes_sent < 0)
-    {
-        printf("Error: Cannot send message to server!\n");
-        exit(1);
-    }
-}
+void send_server(int connfd, conn_msg_type conn_msg);
 
-void print_title()
-{
-    printf("Wheel of Fortune\n");
-    printf("====================================\n\n");
-}
 
-void print_sub_question(sub_question_type sub_question)
-{
-    // Clear screen
-    printf("\033[2J");
+void print_title();
 
-    printf("Sub question:\n");
-    printf("%s\n", sub_question.question);
-    printf("A. %s\n", sub_question.answer[0]);
-    printf("B. %s\n", sub_question.answer[1]);
-    printf("C. %s\n", sub_question.answer[2]);
-}
+void print_sub_question(sub_question_type sub_question);
 
-void print_waiting_room(waiting_room_type waiting_room)
-{
-    // Clear screen
-    printf("\033[2J");
+void print_waiting_room(waiting_room_type waiting_room);
 
-    // Print title
-    print_title();
+void print_game_state(game_state_type game_state);
 
-    // Print waiting room
-    printf("Waiting room:\n");
-    printf("Waiting room joined: %d\n", waiting_room.joined);
-    for (int i = 0; i < waiting_room.joined; i++)
-    {
-        printf("Player %d: %s\n", i + 1, waiting_room.player[i].username);
-    }
-    printf("\n");
-}
+void handle_game_state(game_state_type *game_state);
 
-void print_game_state(game_state_type game_state)
-{
+char receive_answer();
 
-    // Clear screen
-    printf("\033[2J");
+void handle_sub_question(sub_question_type *sub_question);
 
-    // Print title
-    print_title();
+void print_notification(char *notification);
 
-    // Print game state
-    printf("====================================\n\n");
-    printf("Game state:\n\n");
-
-    // Print player
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
-    {
-        printf("Player %d: %s\n", i + 1, game_state.player[i].username);
-        printf("Point: %d\n\n", game_state.player[i].point);
-    }
-
-    // Print server's message
-    printf("Server's message: \n%s\n", game_state.game_message);
-
-    // Print sector
-    printf("Current sector: %d\n", game_state.sector);
-
-    // Print crossword
-    printf("Crossword:\n");
-    printf("%s\n", game_state.crossword);
-
-    // Print current player
-    printf("[DEBUG] Current turn: %d\n", game_state.turn);
-    printf("Current player: %s\n", game_state.player[game_state.turn].username);
-
-    return;
-}
-
-void handle_game_state(game_state_type *game_state)
-{
-    int i;
-    int bytes_sent;
-
-    print_game_state(*game_state);
-
-    // If it's my turn
-    if (strcmp(game_state->player[game_state->turn].username, username) == 0)
-    {
-        printf("Please enter your guess: ");
-
-        // Check guess_char is alphabet
-        game_state->guess_char = '0';
-        while (!isalpha(game_state->guess_char))
-        {
-            game_state->guess_char = getchar();
-            fflush(stdin);
-        }
-
-        game_state->guess_char = toupper(game_state->guess_char);
-
-        // Send guess char to server
-        copy_game_state_type(&conn_msg.data.game_state, *game_state);
-        conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);
-        send_server(client_sock, conn_msg);
-    }
-}
-
-char receive_answer()
-{
-    char answer = '0';
-    // Check answer is A, B, C
-    while (answer != 'A' && answer != 'B' && answer != 'C')
-    {
-        printf("Please enter your answer (A, B, C): ");
-        fflush(stdin);
-        answer = toupper(getchar());
-        fflush(stdin);
-    }
-    return answer;
-}
-
-void handle_sub_question(sub_question_type *sub_question)
-{
-    int i;
-    int bytes_sent;
-    print_sub_question(*sub_question);
-
-    // If it's my turn
-    if (strcmp(sub_question->username, username) == 0)
-    {
-        // Send answer to server
-        // printf("[DEBUG] Received answer: %c\n", game_state->sub_question.key);
-        sub_question->guess = receive_answer();
-        // printf("[DEBUG] Answer: %c\n", game_state->guess_char);
-        copy_sub_question_type(&conn_msg.data.sub_question, *sub_question);
-        conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
-        send_server(client_sock, conn_msg);
-    }
-}
-
-void print_notification(char *notification)
-{
-    // Clear screen
-    printf("\033[2J");
-    printf("====================================\n\n");
-    printf("%s\n", notification);
-}
+int is_valid_guesschar(game_state_type game_state);
 
 int main(int argc, char *argv[])
 {
@@ -296,5 +161,193 @@ back:
 
     // Step 5: Close socket
     close(client_sock);
+    return 0;
+}
+
+void send_server(int connfd, conn_msg_type conn_msg)
+{
+    int bytes_sent;
+    bytes_sent = send(connfd, &conn_msg, sizeof(conn_msg), 0);
+    printf("[DEBUG] Send %d bytes\n", bytes_sent);
+    wait();
+    if (bytes_sent < 0)
+    {
+        printf("Error: Cannot send message to server!\n");
+        exit(1);
+    }
+}
+
+
+void print_title()
+{
+    printf("Wheel of Fortune\n");
+    printf("====================================\n\n");
+}
+
+
+void print_sub_question(sub_question_type sub_question)
+{
+    // Clear screen
+    printf("\033[2J");
+
+    printf("Sub question:\n");
+    printf("%s\n", sub_question.question);
+    printf("A. %s\n", sub_question.answer[0]);
+    printf("B. %s\n", sub_question.answer[1]);
+    printf("C. %s\n", sub_question.answer[2]);
+}
+
+
+void print_waiting_room(waiting_room_type waiting_room)
+{
+    // Clear screen
+    printf("\033[2J");
+
+    // Print title
+    print_title();
+
+    // Print waiting room
+    printf("Waiting room:\n");
+    printf("Waiting room joined: %d\n", waiting_room.joined);
+    for (int i = 0; i < waiting_room.joined; i++)
+    {
+        printf("Player %d: %s\n", i + 1, waiting_room.player[i].username);
+    }
+    printf("\n");
+}
+
+
+void print_game_state(game_state_type game_state)
+{
+
+    // Clear screen
+    printf("\033[2J");
+
+    // Print title
+    print_title();
+
+    // Print game state
+    printf("====================================\n\n");
+    printf("Game state:\n\n");
+
+    // Print player
+    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        printf("Player %d: %s\n", i + 1, game_state.player[i].username);
+        printf("Point: %d\n\n", game_state.player[i].point);
+    }
+
+    // Print server's message
+    printf("Server's message: \n%s\n", game_state.game_message);
+
+    // Print sector
+    printf("Current sector: %d\n", game_state.sector);
+
+    // Print crossword
+    printf("Crossword:\n");
+    printf("%s\n", game_state.crossword);
+
+    // Print current player
+    printf("[DEBUG] Current turn: %d\n", game_state.turn);
+    printf("Current player: %s\n", game_state.player[game_state.turn].username);
+
+    return;
+}
+
+
+void handle_game_state(game_state_type *game_state)
+{
+    int i;
+    int bytes_sent;
+
+    print_game_state(*game_state);
+
+    // If it's my turn
+    if (strcmp(game_state->player[game_state->turn].username, username) == 0)
+    {
+        printf("Please enter your guess: ");
+
+        // Check guess_char is alphabet
+        game_state->guess_char = '0';
+        while (!isalpha(game_state->guess_char))
+        {
+            game_state->guess_char = getchar();
+            fflush(stdin);
+        }
+
+        game_state->guess_char = toupper(game_state->guess_char);
+
+        while(is_valid_guesschar(*game_state))
+        {
+            printf("Cannot choose exist character\nPlease choose again: ");
+            game_state->guess_char = '0';
+            while (!isalpha(game_state->guess_char))
+            {
+                game_state->guess_char = getchar();
+                fflush(stdin);
+            }
+
+            game_state->guess_char = toupper(game_state->guess_char);
+        }
+
+        // Send guess char to server
+        copy_game_state_type(&conn_msg.data.game_state, *game_state);
+        conn_msg = make_conn_msg(GUESS_CHAR, conn_msg.data);
+        send_server(client_sock, conn_msg);
+    }
+}
+
+
+char receive_answer()
+{
+    char answer = '0';
+    // Check answer is A, B, C
+    while (answer != 'A' && answer != 'B' && answer != 'C')
+    {
+        printf("Please enter your answer (A, B, C): ");
+        fflush(stdin);
+        answer = toupper(getchar());
+        fflush(stdin);
+    }
+    return answer;
+}
+
+
+void handle_sub_question(sub_question_type *sub_question)
+{
+    int i;
+    int bytes_sent;
+    print_sub_question(*sub_question);
+
+    // If it's my turn
+    if (strcmp(sub_question->username, username) == 0)
+    {
+        // Send answer to server
+        // printf("[DEBUG] Received answer: %c\n", game_state->sub_question.key);
+        sub_question->guess = receive_answer();
+        // printf("[DEBUG] Answer: %c\n", game_state->guess_char);
+        copy_sub_question_type(&conn_msg.data.sub_question, *sub_question);
+        conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
+        send_server(client_sock, conn_msg);
+    }
+}
+
+
+void print_notification(char *notification)
+{
+    // Clear screen
+    printf("\033[2J");
+    printf("====================================\n\n");
+    printf("%s\n", notification);
+}
+
+
+int is_valid_guesschar(game_state_type game_state){
+    int i;
+    for(i = 0; i < strlen(game_state.crossword); i++){
+        if(game_state.crossword[i] == game_state.guess_char){
+            return 1;
+        }
+    }
     return 0;
 }

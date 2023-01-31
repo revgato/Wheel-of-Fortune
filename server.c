@@ -158,11 +158,6 @@ int main(int argc, char *argv[])
             // printf("Waiting room joined: %d\n", waiting_room.joined);
             // bytes_sent = send(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg_type), 0);
             send_all(*client_room, conn_msg);
-            if (bytes_sent < 0)
-            {
-                perror("\nError: ");
-                return 0;
-            }
 
             current_joined++;
             printf("Current joined: %d\n", current_joined);
@@ -380,6 +375,7 @@ void *client_handle(void *arg)
     conn_msg = make_conn_msg(END_GAME, conn_msg.data);
     send_all(client_room, conn_msg);
 
+    printf("Close thread\n");
     pthread_exit(NULL);
 }
 

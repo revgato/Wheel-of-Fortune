@@ -132,7 +132,9 @@ void send_all(client_room_type client_room, conn_msg_type conn_msg)
     {
         if(client_room.status[i] != 1) continue;
         // printf("[DEBUG] Send to connfd: %d\n", client_room.connfd[i]);
+        printf("[DEBUG] Send to username: %s\n", client_room.username[i]);
         bytes_sent = send(client_room.connfd[i], &conn_msg, sizeof(conn_msg), 0);
+        printf("[DEBUG] Bytes sent: %d\n", bytes_sent);
         check_afk(bytes_sent, &client_room, i);
     }
 }
