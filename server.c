@@ -213,9 +213,6 @@ void *client_handle(void *arg)
                 // TODO: Handle AFK
                 if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
 
-                    // // Close connection to this client
-                    // close(client_room.connfd[game_state.turn]);
-
                     // Send afk notification to all clients
                     sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
                     conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
@@ -297,9 +294,6 @@ void *client_handle(void *arg)
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
                 // TODO: Handle AFK
                 if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
-
-                    // // Close connection to this client
-                    // close(client_room.connfd[game_state.turn]);
 
                     // Send afk notification to all clients
                     sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
