@@ -14,6 +14,7 @@
 typedef enum conn_msg_type_type_t
 {
     JOIN,
+    REFUSE,
     WAITING_ROOM,
     // START,
     // POINT,
@@ -101,6 +102,10 @@ conn_msg_type make_conn_msg(conn_msg_type_type type, conn_data_type data)
 
     case END_GAME:
         copy_game_state_type(&conn_msg.data.game_state, data.game_state);
+        break;
+
+    case REFUSE:
+        strcpy(conn_msg.data.notification, data.notification);
         break;
     
     }

@@ -16,7 +16,6 @@ char username[50];
 char guess_char;
 int client_sock;
 
-
 void wait()
 {
     sleep(2);
@@ -45,7 +44,7 @@ void print_sub_question(sub_question_type sub_question)
 {
     // Clear screen
     printf("\033[2J");
-    
+
     printf("Sub question:\n");
     printf("%s\n", sub_question.question);
     printf("A. %s\n", sub_question.answer[0]);
@@ -170,7 +169,6 @@ void handle_sub_question(sub_question_type *sub_question)
     }
 }
 
-
 void print_notification(char *notification)
 {
     // Clear screen
@@ -216,6 +214,7 @@ int main(int argc, char *argv[])
 
     printf("Welcome to Wheel of Fortune\n");
 
+back:
     printf("Please enter your username: ");
     scanf("%s%*c", username);
     player_type player = init_player(username, -1);
@@ -254,6 +253,12 @@ int main(int argc, char *argv[])
         // Handle message from server
         switch (conn_msg.type)
         {
+
+        case REFUSE:
+        printf("Refuse\n");
+            print_notification(conn_msg.data.notification);
+            goto back;
+
         case WAITING_ROOM:
             // TODO: Handle waiting room message
             print_waiting_room(conn_msg.data.waiting_room);

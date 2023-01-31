@@ -24,6 +24,7 @@ int is_all_afk(client_room_type client_room);
 
 void summary(game_state_type *game_state);
 
+int is_exist_username(waiting_room_type waiting_room, char *username);
 
 int main(int argc, char *argv[])
 {
@@ -34,11 +35,17 @@ int main(int argc, char *argv[])
     }
 
     int listenfd, *connfd;
+    int break_nested_loop = 0;
     struct sockaddr_in server, *client; // Server's address information
     int sin_size;
     pthread_t tid;
     int bytes_received, bytes_sent;
     int current_joined;
+    char temp[300];
+
+    // Try to move declaration of conn_msg to here
+    // Create new conn_msg variable
+    conn_msg_type conn_msg;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     { /* calls sockets() */
@@ -87,16 +94,51 @@ int main(int argc, char *argv[])
             // Set waiting time for this client
             setsockopt(client_room->connfd[current_joined], SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
 
-
-            // Create new conn_msg variable
-            conn_msg_type conn_msg;
+            // // Create new conn_msg variable
+            // conn_msg_type conn_msg;
 
             // Receive username from client
             bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
             if (bytes_received <= 0)
             {
+                close(client_room->connfd[current_joined]);
                 continue;
             }
+
+            // Check if username is exist
+            break_nested_loop = 0;
+            while (is_exist_username(waiting_room, conn_msg.data.player.username))
+            {
+
+                // Send notification to client
+                strcpy(temp, conn_msg.data.player.username);
+                sprintf(conn_msg.data.notification, "Username %s is already exist. Please choose another username", temp);
+
+                conn_msg = make_conn_msg(REFUSE, conn_msg.data);
+                bytes_sent = send(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
+
+                if (bytes_sent <= 0)
+                {
+                    break_nested_loop = 1;
+                    break;
+                }
+                
+
+                bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
+                if (bytes_received <= 0)
+                {
+                    break_nested_loop = 1;
+                    break;
+                }
+            }
+
+            if (break_nested_loop)
+            {
+                close(client_room->connfd[current_joined]);
+                continue;
+            }
+
+
             printf("Waiting room: received %d bytes\n", bytes_received);
             fflush(stdout);
             strcpy(client_room->username[current_joined], conn_msg.data.player.username);
@@ -211,10 +253,11 @@ void *client_handle(void *arg)
             {
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
                 // TODO: Handle AFK
-                if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
+                if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn)))
+                {
 
                     // Send afk notification to all clients
-                    sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
+                    sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username);
                     conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
                     send_all(client_room, conn_msg);
 
@@ -226,25 +269,28 @@ void *client_handle(void *arg)
                 guess_char = conn_msg.data.sub_question.guess;
             }
 
-            if (is_afk){
+            if (is_afk)
+            {
                 break;
             }
 
             // Check answer, if correct, add 200 points to current player
-            
-            if (conn_msg.data.sub_question.guess == conn_msg.data.sub_question.key){
+
+            if (conn_msg.data.sub_question.guess == conn_msg.data.sub_question.key)
+            {
                 game_state.player[game_state.turn].point += 200;
                 sprintf(conn_msg.data.notification, "Correct answer! [%s] gained 200 points", game_state.player[game_state.turn].username);
                 correct = 1;
             }
-            else{
+            else
+            {
                 game_state.player[game_state.turn].point -= 100;
                 sprintf(conn_msg.data.notification, "Wrong answer! [%s] lost 100 points", game_state.player[game_state.turn].username);
                 correct = 0;
             }
 
             // Send game notification to all clients
-        
+
             conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
             send_all(client_room, conn_msg);
 
@@ -253,7 +299,7 @@ void *client_handle(void *arg)
 
             // Minus 150
             game_state.player[game_state.turn].point -= 150;
-            
+
             sprintf(conn_msg.data.notification, "Unlucky! %s lost 150 points", game_state.player[game_state.turn].username);
 
             // Send game notification to all clients
@@ -293,10 +339,11 @@ void *client_handle(void *arg)
             {
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
                 // TODO: Handle AFK
-                if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn))){
+                if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn)))
+                {
 
                     // Send afk notification to all clients
-                    sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username); 
+                    sprintf(conn_msg.data.notification, "[%s] is AFK", game_state.player[game_state.turn].username);
                     conn_msg = make_conn_msg(NOTIFICATION, conn_msg.data);
                     send_all(client_room, conn_msg);
 
@@ -308,7 +355,8 @@ void *client_handle(void *arg)
                 guess_char = conn_msg.data.game_state.guess_char;
             }
 
-            if (is_afk){
+            if (is_afk)
+            {
                 break;
             }
             printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
@@ -364,15 +412,18 @@ int is_all_afk(client_room_type client_room)
     return 1;
 }
 
-void summary(game_state_type *game_state){
+void summary(game_state_type *game_state)
+{
     // Write summary to game_state->game_message
     int i;
     char temp[100];
     int max_point = 0;
     int winner = 0;
     sprintf(game_state->game_message, "Summary:\n");
-    for (i = 0; i < PLAYER_PER_ROOM; i++){
-        if (game_state->player[i].point > max_point){
+    for (i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        if (game_state->player[i].point > max_point)
+        {
             max_point = game_state->player[i].point;
             winner = i;
         }
@@ -381,4 +432,20 @@ void summary(game_state_type *game_state){
     }
     sprintf(temp, "Winner: %s\n", game_state->player[winner].username);
     strcat(game_state->game_message, temp);
+}
+
+int is_exist_username(waiting_room_type waiting_room, char *username)
+{
+    int i;
+
+    // Check if username is exist
+    for (i = 0; i < waiting_room.joined; i++)
+    {
+        if (strcmp(waiting_room.player[i].username, username) == 0)
+        {
+            printf("[DEBUG] Username %s is exist\n", username);
+            return 1;
+        }
+    }
+    return 0;
 }
