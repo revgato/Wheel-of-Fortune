@@ -77,6 +77,7 @@ void copy_sub_question_type(sub_question_type *dest, sub_question_type src);
 
 int solve_crossword(game_state_type *game_state, char guess_char);
 void roll_wheel(game_state_type *game_state);
+int max(int a, int b);
 
 // Function's body
 player_type init_player(char username[], int id)
@@ -126,11 +127,11 @@ game_state_type init_game_state()
     game_state.wheel[1] = 200;
     game_state.wheel[2] = -1;
     game_state.wheel[3] = 200;
-    game_state.wheel[4] = -1;
+    game_state.wheel[4] = -2;
     game_state.wheel[5] = 100;
-    game_state.wheel[6] = -1;
+    game_state.wheel[6] = -2;
     game_state.wheel[7] = 300;
-    game_state.wheel[8] = 100;
+    game_state.wheel[8] = -2;
     game_state.wheel[9] = -2;
     game_state.wheel[10] = 200;
     game_state.wheel[11] = -1;
@@ -333,6 +334,10 @@ void roll_wheel(game_state_type *game_state){
     int random_number = rand() % 15;
     game_state->sector = game_state->wheel[random_number];
     // sprintf(game_state->game_message, "The wheel stop at %d\n", game_state->sector);
+}
+
+int max(int a, int b){
+    return a > b? a : b;
 }
 
 #endif

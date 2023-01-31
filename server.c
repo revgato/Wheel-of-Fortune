@@ -13,7 +13,7 @@
 #include <ctype.h>
 
 // TODO: adjust_point
-
+ 
 // Global variables
 client_room_type client_room;
 
@@ -285,7 +285,7 @@ void *client_handle(void *arg)
             }
             else
             {
-                game_state.player[game_state.turn].point -= 100;
+                game_state.player[game_state.turn].point = max(0, game_state.player[game_state.turn].point - 100);
                 sprintf(conn_msg.data.notification, "Wrong answer! [%s] lost 100 points", game_state.player[game_state.turn].username);
                 correct = 0;
             }
@@ -299,7 +299,7 @@ void *client_handle(void *arg)
         case -2:
 
             // Minus 150
-            game_state.player[game_state.turn].point -= 150;
+            game_state.player[game_state.turn].point = max(0, game_state.player[game_state.turn].point - 150);
 
             sprintf(conn_msg.data.notification, "Unlucky! %s lost 150 points", game_state.player[game_state.turn].username);
 
