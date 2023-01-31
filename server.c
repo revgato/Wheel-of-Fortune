@@ -12,6 +12,8 @@
 #include "communicate.h"
 #include <ctype.h>
 
+// TODO: adjust_point
+
 // Global variables
 client_room_type client_room;
 
@@ -196,7 +198,7 @@ void *client_handle(void *arg)
     {
         game_state.player[i] = init_player(client_room.username[i], client_room.connfd[i]);
     }
-
+ 
     for (i = 0; i < client_room.joined; i++)
     {
         printf("Player %d: %s\n", i, game_state.player[i].username);
@@ -239,7 +241,6 @@ void *client_handle(void *arg)
         {
         case -1:
 
-            // TODO: Sub question
             get_sub_question(&conn_msg.data.sub_question, game_state.player[game_state.turn].username);
 
             // Send sub question to all clients
@@ -338,7 +339,7 @@ void *client_handle(void *arg)
             while (!isalpha(guess_char))
             {
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-                // TODO: Handle AFK
+                // Handle AFK
                 if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn)))
                 {
 
