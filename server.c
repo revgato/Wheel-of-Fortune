@@ -11,6 +11,7 @@
 #include "game.h"
 #include "communicate.h"
 #include <ctype.h>
+#include <signal.h>
 
 // TODO: adjust_point
  
@@ -44,6 +45,9 @@ int main(int argc, char *argv[])
     int bytes_received, bytes_sent;
     int current_joined;
     char temp[300];
+
+    // Ignore SIGPIPE signal (when server try to send data to client but client is disconnected)
+    sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
     // Try to move declaration of conn_msg to here
     // Create new conn_msg variable

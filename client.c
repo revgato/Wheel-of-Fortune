@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
+// #include <signal.h>
 // #include <pthread.h>
 #include "game.h"
 #include "communicate.h"
@@ -15,6 +16,13 @@ conn_msg_type conn_msg;
 char username[50];
 char guess_char;
 int client_sock;
+
+// void handle_termination_signal(int signum)
+// {
+//     printf("Client terminated\n");
+//     close(client_sock);
+//     exit(0);
+// }
 
 void wait()
 {
@@ -44,6 +52,7 @@ int is_valid_guesschar(game_state_type game_state);
 
 int main(int argc, char *argv[])
 {
+    // signal(SIGINT, handle_termination_signal);
     if (argc != 3)
     {
         printf("Usage: %s <Server IP> <Server Port>\n", argv[0]);
