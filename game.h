@@ -50,12 +50,8 @@ typedef struct game_state_type_t
     // Current sector
     int sector;
 
-    // Crossword and key
-    char key[50];
+    // Crossword
     char crossword[50];
-
-    // Sub question
-    // sub_question_type sub_question;
 
     // Host's message
     char game_message[200];
@@ -75,7 +71,7 @@ void copy_waiting_room_type(waiting_room_type *dest, waiting_room_type src);
 void copy_game_state_type(game_state_type *dest, game_state_type src);
 void copy_sub_question_type(sub_question_type *dest, sub_question_type src);
 
-int solve_crossword(game_state_type *game_state, char guess_char);
+int solve_crossword(game_state_type *game_state, char key[], char guess_char);
 void roll_wheel(game_state_type *game_state);
 int max(int a, int b);
 
@@ -96,7 +92,7 @@ waiting_room_type init_waiting_room()
     return waiting_room;
 }
 
-game_state_type init_game_state()
+game_state_type init_game_state(char key[])
 {
     game_state_type game_state;
 
@@ -139,11 +135,9 @@ game_state_type init_game_state()
     // game_state.wheel[13] = -3;
     // game_state.wheel[14] = 200;
 
-    // Init key
-    init_key(game_state.key);
     
     // Init crossword by binding key
-    init_crossword(game_state.key, game_state.crossword);
+    init_crossword(key, game_state.crossword);
 
     // Init turn, start from 0
     game_state.turn = 0;
@@ -170,7 +164,6 @@ void init_key(char key[])
             num_line = num_line + 1;
 
     // Random pick 1 line
-    // srand(time(0));
     int random_line = rand() % num_line;
     int i = 0;
 
@@ -282,8 +275,7 @@ void copy_game_state_type(game_state_type *dest, game_state_type src)
     }
     dest->sector = src.sector;
 
-    // Copy key and crossword
-    strcpy(dest->key, src.key);
+    // Copy crossword
     strcpy(dest->crossword, src.crossword);
 
 
@@ -300,15 +292,15 @@ void copy_sub_question_type(sub_question_type *dest, sub_question_type src){
     strcpy(dest->username, src.username);
 }
 
-int solve_crossword(game_state_type *game_state, char guess_char){
+int solve_crossword(game_state_type *game_state, char key[], char guess_char){
 
     // Check if guess_char is in key
     int i;
     int is_in_key = 0;
 
-    for (i = 0; i < strlen(game_state->key); i++)
+    for (i = 0; i < strlen(key); i++)
     {
-        if (game_state->key[i] == guess_char)
+        if (key[i] == guess_char)
         {
             is_in_key++;
             game_state->crossword[i] = guess_char;
@@ -330,10 +322,8 @@ int solve_crossword(game_state_type *game_state, char guess_char){
 
 void roll_wheel(game_state_type *game_state){
     // Random pick 1 number from wheel
-    // srand(time(0));
     int random_number = rand() % 15;
     game_state->sector = game_state->wheel[random_number];
-    // sprintf(game_state->game_message, "The wheel stop at %d\n", game_state->sector);
 }
 
 int max(int a, int b){

@@ -13,7 +13,6 @@
 #include <ctype.h>
 #include <signal.h>
 
-// TODO: adjust_point
  
 // Global variables
 client_room_type client_room;
@@ -25,8 +24,10 @@ int specify_turn(int turn, client_room_type client_room);
 
 int is_all_afk(client_room_type client_room);
 
+// Summary game after game is over
 void summary(game_state_type *game_state);
 
+// Check if username is exist in waiting room
 int is_exist_username(waiting_room_type waiting_room, char *username);
 
 int main(int argc, char *argv[])
@@ -49,8 +50,7 @@ int main(int argc, char *argv[])
     // Ignore SIGPIPE signal (when server try to send data to client but client is disconnected)
     sigaction(SIGPIPE, &(struct sigaction){SIG_IGN}, NULL);
 
-    // Try to move declaration of conn_msg to here
-    // Create new conn_msg variable
+    // Create new communicate message variable
     conn_msg_type conn_msg;
 
     if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -59,7 +59,8 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Set client waiting time
+    // Set client waiting time, if client doesn't send any data in 
+    // WAIT_TIME seconds, server will close connection (AFK)
     struct timeval timeout;
     timeout.tv_sec = WAIT_TIME;
     timeout.tv_usec = 0;
@@ -100,9 +101,6 @@ int main(int argc, char *argv[])
             // Set waiting time for this client
             setsockopt(client_room->connfd[current_joined], SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
 
-            // // Create new conn_msg variable
-            // conn_msg_type conn_msg;
-
             // Receive username from client
             bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
             if (bytes_received <= 0)
@@ -115,7 +113,6 @@ int main(int argc, char *argv[])
             break_nested_loop = 0;
             while (is_exist_username(waiting_room, conn_msg.data.player.username))
             {
-
                 // Send notification to client
                 strcpy(temp, conn_msg.data.player.username);
                 sprintf(conn_msg.data.notification, "Username %s is already exist. Please choose another username", temp);
@@ -129,7 +126,6 @@ int main(int argc, char *argv[])
                     break;
                 }
                 
-
                 bytes_received = recv(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg), 0);
                 if (bytes_received <= 0)
                 {
@@ -144,7 +140,7 @@ int main(int argc, char *argv[])
                 continue;
             }
 
-
+            // If username is not exist, add it to waiting room
             printf("Waiting room: received %d bytes\n", bytes_received);
             fflush(stdout);
             strcpy(client_room->username[current_joined], conn_msg.data.player.username);
@@ -159,19 +155,13 @@ int main(int argc, char *argv[])
             // Send waiting room to client
             copy_waiting_room_type(&conn_msg.data.waiting_room, waiting_room);
             conn_msg = make_conn_msg(WAITING_ROOM, conn_msg.data);
-            // printf("Waiting room joined: %d\n", waiting_room.joined);
-            // bytes_sent = send(client_room->connfd[current_joined], &conn_msg, sizeof(conn_msg_type), 0);
             send_all(*client_room, conn_msg);
 
             current_joined++;
-            printf("Current joined: %d\n", current_joined);
-            printf("Waiting room joined: %d\n", waiting_room.joined);
-            printf("Client room joined: %d\n", client_room->joined);
         }
 
         // For each client's room, spawns a thread, and the thread handles the new client's room
         pthread_create(&tid, NULL, &client_handle, (void *)client_room);
-        // pthread_create(&tid, NULL, &client_handle, NULL);
     }
 }
 
@@ -190,7 +180,12 @@ void *client_handle(void *arg)
     int bytes_sent, bytes_received;
     conn_msg_type conn_msg;
 
-    game_state_type game_state = init_game_state();
+    // Init key
+    char key[50];
+    init_key(key);
+
+    // Init game state
+    game_state_type game_state = init_game_state(key);
 
     // Init player
     for (i = 0; i < client_room.joined; i++)
@@ -203,17 +198,16 @@ void *client_handle(void *arg)
         printf("Player %d: %s\n", i, game_state.player[i].username);
     }
 
-    printf("Key: %s\nCrossword: %s\n", game_state.key, game_state.crossword);
+    printf("Key: %s\nCrossword: %s\n", key, game_state.crossword);
 
     // Loop while crosswords are not solved
-    while (strcmp(game_state.crossword, game_state.key) != 0)
+    while (strcmp(game_state.crossword, key) != 0)
     {
 
         // Clear previous game message
         sprintf(game_state.game_message, "%s", "");
 
         printf("\n\n\n");
-        // [DEBUG] print all client' status
         for (i = 0; i < client_room.joined; i++)
         {
             printf("[DEBUG] Client %d status: %d\n", i, client_room.status[i]);
@@ -252,7 +246,7 @@ void *client_handle(void *arg)
             while (!isalpha(guess_char))
             {
                 bytes_received = recv(client_room.connfd[game_state.turn], &conn_msg, sizeof(conn_msg), 0);
-                // TODO: Handle AFK
+                // Handle AFK
                 if ((is_afk = check_afk(bytes_received, &client_room, game_state.turn)))
                 {
 
@@ -361,7 +355,7 @@ void *client_handle(void *arg)
             }
             printf("[DEBUG] Guess: %c\n", conn_msg.data.game_state.guess_char);
 
-            correct = solve_crossword(&game_state, conn_msg.data.game_state.guess_char);
+            correct = solve_crossword(&game_state, key, conn_msg.data.game_state.guess_char);
             printf("[DEBUG] Correct: %d\n", correct);
 
             // Send result to all clients
@@ -371,7 +365,6 @@ void *client_handle(void *arg)
             break;
         }
 
-        // sector of wheel
     }
     summary(&game_state);
     // Send game summary to all clients
@@ -391,7 +384,6 @@ int specify_turn(int turn, client_room_type client_room)
 
     while (client_room.status[current_turn] != 1 && current_turn != turn)
     {
-        // printf("[DEBUG] old_turn: %d, specify_turn: %d, connfd: %d\n", turn, current_turn, client_room.connfd[current_turn]);
         current_turn = (current_turn + 1) % client_room.joined;
     }
 

@@ -5,8 +5,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
-// #include <signal.h>
-// #include <pthread.h>
 #include "game.h"
 #include "communicate.h"
 #include <ctype.h>
@@ -17,20 +15,12 @@ char username[50];
 char guess_char;
 int client_sock;
 
-// void handle_termination_signal(int signum)
-// {
-//     printf("Client terminated\n");
-//     close(client_sock);
-//     exit(0);
-// }
-
 void wait()
 {
     sleep(2);
 }
 
 void send_server(int connfd, conn_msg_type conn_msg);
-
 
 void print_title();
 
@@ -52,7 +42,6 @@ int is_valid_guesschar(game_state_type game_state);
 
 int main(int argc, char *argv[])
 {
-    // signal(SIGINT, handle_termination_signal);
     if (argc != 3)
     {
         printf("Usage: %s <Server IP> <Server Port>\n", argv[0]);
@@ -116,7 +105,6 @@ back:
         wait();
         if (bytes_received <= 0)
         {
-            // perror("\nError: ");
             printf("Lost server's connection\n");
             close(client_sock);
             return 0;
@@ -129,36 +117,23 @@ back:
         {
 
         case REFUSE:
-        printf("Refuse\n");
             print_notification(conn_msg.data.notification);
             goto back;
 
         case WAITING_ROOM:
-            // TODO: Handle waiting room message
             print_waiting_room(conn_msg.data.waiting_room);
-            // wait();
-
             break;
+
         case GAME_STATE:
             handle_game_state(&conn_msg.data.game_state);
-            // printf("Press any key to continue...");
-            // getchar();
-            // wait();
             break;
+
         case SUB_QUESTION:
             handle_sub_question(&conn_msg.data.sub_question);
-            // printf("Press any key to continue...");
-            // getchar();
-            // wait();
-
             break;
 
         case NOTIFICATION:
             print_notification(conn_msg.data.notification);
-
-            // printf("Press any key to continue...");
-            // getchar();
-            // wait();
             break;
 
         case END_GAME:
@@ -186,13 +161,11 @@ void send_server(int connfd, conn_msg_type conn_msg)
     }
 }
 
-
 void print_title()
 {
     printf("Wheel of Fortune\n");
     printf("====================================\n\n");
 }
-
 
 void print_sub_question(sub_question_type sub_question)
 {
@@ -205,7 +178,6 @@ void print_sub_question(sub_question_type sub_question)
     printf("B. %s\n", sub_question.answer[1]);
     printf("C. %s\n", sub_question.answer[2]);
 }
-
 
 void print_waiting_room(waiting_room_type waiting_room)
 {
@@ -224,7 +196,6 @@ void print_waiting_room(waiting_room_type waiting_room)
     }
     printf("\n");
 }
-
 
 void print_game_state(game_state_type game_state)
 {
@@ -263,7 +234,6 @@ void print_game_state(game_state_type game_state)
     return;
 }
 
-
 void handle_game_state(game_state_type *game_state)
 {
     int i;
@@ -286,7 +256,7 @@ void handle_game_state(game_state_type *game_state)
 
         game_state->guess_char = toupper(game_state->guess_char);
 
-        while(is_valid_guesschar(*game_state))
+        while (is_valid_guesschar(*game_state))
         {
             printf("Cannot choose exist character\nPlease choose again: ");
             game_state->guess_char = '0';
@@ -306,7 +276,6 @@ void handle_game_state(game_state_type *game_state)
     }
 }
 
-
 char receive_answer()
 {
     char answer = '0';
@@ -321,7 +290,6 @@ char receive_answer()
     return answer;
 }
 
-
 void handle_sub_question(sub_question_type *sub_question)
 {
     int i;
@@ -332,15 +300,12 @@ void handle_sub_question(sub_question_type *sub_question)
     if (strcmp(sub_question->username, username) == 0)
     {
         // Send answer to server
-        // printf("[DEBUG] Received answer: %c\n", game_state->sub_question.key);
         sub_question->guess = receive_answer();
-        // printf("[DEBUG] Answer: %c\n", game_state->guess_char);
         copy_sub_question_type(&conn_msg.data.sub_question, *sub_question);
         conn_msg = make_conn_msg(SUB_QUESTION, conn_msg.data);
         send_server(client_sock, conn_msg);
     }
 }
-
 
 void print_notification(char *notification)
 {
@@ -350,11 +315,13 @@ void print_notification(char *notification)
     printf("%s\n", notification);
 }
 
-
-int is_valid_guesschar(game_state_type game_state){
+int is_valid_guesschar(game_state_type game_state)
+{
     int i;
-    for(i = 0; i < strlen(game_state.crossword); i++){
-        if(game_state.crossword[i] == game_state.guess_char){
+    for (i = 0; i < strlen(game_state.crossword); i++)
+    {
+        if (game_state.crossword[i] == game_state.guess_char)
+        {
             return 1;
         }
     }
