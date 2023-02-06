@@ -10,6 +10,7 @@ extern "C" {
 class Backend : public QObject
 {
     Q_OBJECT
+    // Property an array of QString
     Q_PROPERTY(QString text READ getText WRITE setText NOTIFY textChanged)
 
 public:

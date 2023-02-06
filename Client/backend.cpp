@@ -37,12 +37,7 @@ void Backend::join(QString username_input)
 
     if (conn_msg.type == WAITING_ROOM)
     {
-        // Assign username to char*
-        for (int i = 0; i < conn_msg.data.waiting_room.joined; i++)
-        {
-            Backend::text = QString::fromStdString(conn_msg.data.waiting_room.player[0].username);
-            emit textChanged();
-        }
+        Backend::text = QString::fromStdString(conn_msg.data.waiting_room.player[0].username);
         emit waitingRoom();
     }
     else

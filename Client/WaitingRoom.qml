@@ -7,31 +7,18 @@ Item{
     width: 1024
     height: 768
 
-    property bool show_username0: false
-    property bool show_username1: false
-
     BorderImage{
         id: borderImage
         anchors.fill: parent
         source: "qrc:/freefire.jpg"
     }
 
-    // ColumnLayout{
+    ColumnLayout{
         Text{
             id: username0
-            visible: show_username0
             text: backEnd.text
             font.pixelSize: 30
             color: "white"
-            
         }
-
-        // Text{
-        //     id: username1
-        //     visible: false
-        //     text: backEnd.text
-        //     font.pixelSize: 30
-        //     color: "white"
-        // }
-    // }
+    }
 }
