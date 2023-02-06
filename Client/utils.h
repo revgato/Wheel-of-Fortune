@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <pthread.h>
 #include <string.h>
 #include "game.h"
 #include "communicate.h"
@@ -19,6 +20,8 @@ int disconnect_from_server();
 void send_server();
 
 void receive_server();
+
+void *pthread_waiting_room(void *arg);
 
 
 void print_sub_question(sub_question_type sub_question);

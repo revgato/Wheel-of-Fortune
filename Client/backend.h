@@ -26,11 +26,13 @@ public:
     Q_INVOKABLE void connectToServer();
     Q_INVOKABLE void join(QString username_input);
     
+    
 signals:
     void connectedToServer();
     void connectionFailed();
     void waitingRoom();
     void refuse();
+    void gameStart();
 };
 
 #endif // BACKEND_H

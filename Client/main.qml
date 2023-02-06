@@ -38,7 +38,11 @@ ApplicationWindow{
         onRefuse: {
             console.log("Refused")
         }
-
+        
+        onGameStart: {
+            console.log("Game start")
+            // stackView.push("Game.qml")
+        }
         // onTextChanged: {
         //     console.log("Text changed")
         //     waitingRoom.show_username0 = true

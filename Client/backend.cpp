@@ -35,6 +35,7 @@ void Backend::join(QString username_input)
     conn_msg.type = JOIN;
     send_server();
     receive_server();
+    pthread_t tid;
 
     if (conn_msg.type == WAITING_ROOM)
     {
@@ -49,6 +50,10 @@ void Backend::join(QString username_input)
     {
         emit refuse();
     }
+    pthread_create(&tid, NULL, &pthread_waiting_room, NULL);
+    // Wait for the thread to finish
+    // pthread_join(tid, NULL);
+    // emit gameStart();
 }
 
 // QString Backend::getText() const
