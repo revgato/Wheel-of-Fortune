@@ -18,6 +18,7 @@ ApplicationWindow{
     x: screen.virtualX + (screen.width - width) / 2
     y: screen.virtualY + (screen.height - height) / 2
 
+
     Backend{
         id: backEnd
 
@@ -31,10 +32,16 @@ ApplicationWindow{
 
         onWaitingRoom:{
             console.log("Waiting room")
+            stackView.push("WaitingRoom.qml")
         }
 
         onRefuse: {
             console.log("Refused")
+        }
+
+        onTextChanged: {
+            console.log("Text changed")
+            waitingRoom.show_username0 = true
         }
 
         // onW

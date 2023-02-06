@@ -2,6 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MenuStart.qml</file>
+        <file>WaitingRoom.qml</file>
         <file>freefire.jpg</file>
+
     </qresource>
 </RCC>
