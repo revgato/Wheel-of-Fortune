@@ -27,7 +27,7 @@ public:
     void setText(QString value);
     Q_INVOKABLE void connectToServer();
     Q_INVOKABLE void join(QString username_input);
- 
+    Q_INVOKABLE void updateWaitingRoom();
     // void *pthread_waiting_room(void *arg);
 
 signals:

@@ -66,6 +66,16 @@ void Backend::join(QString username_input)
     // emit gameStart();
 }
 
+void Backend::updateWaitingRoom()
+{
+    textList.clear();
+    for(int i=0; i<conn_msg.data.waiting_room.joined; i++)
+    {
+        textList.append(conn_msg.data.waiting_room.player[i].username);
+    }
+    emit waitingRoom();
+}
+
 void *pthread_waiting_room(void *arg)
 {
     free(arg);
@@ -76,7 +86,7 @@ void *pthread_waiting_room(void *arg)
             printf("New player joined\n");
             // Append the new player to the list
             // ****Core dump here****
-            textList.append(conn_msg.data.waiting_room.player[conn_msg.data.waiting_room.joined-1].username);
+            // Backend::textList.append(conn_msg.data.waiting_room.player[conn_msg.data.waiting_room.joined-1].username);
             emit Backend::instance->userJoined();
         }
     }

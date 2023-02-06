@@ -49,7 +49,8 @@ ApplicationWindow{
 
         onUserJoined: {
             console.log("User joined")
-            stackView.push("WaitingRoom.qml")
+            // stackView.push("WaitingRoom.qml")
+            backEnd.updateWaitingRoom()
         }
        
     }
