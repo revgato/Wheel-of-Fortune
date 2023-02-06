@@ -39,10 +39,10 @@ ApplicationWindow{
             console.log("Refused")
         }
 
-        onTextChanged: {
-            console.log("Text changed")
-            waitingRoom.show_username0 = true
-        }
+        // onTextChanged: {
+        //     console.log("Text changed")
+        //     waitingRoom.show_username0 = true
+        // }
 
         // onW
     }

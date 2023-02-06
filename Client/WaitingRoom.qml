@@ -16,7 +16,14 @@ Item{
     ColumnLayout{
         Text{
             id: username0
-            text: backEnd.text
+            text: backEnd.textList[0]
+            font.pixelSize: 30
+            color: "white"
+        }
+
+        Text{
+            id: username1
+            text: backEnd.textList[1]
             font.pixelSize: 30
             color: "white"
         }
