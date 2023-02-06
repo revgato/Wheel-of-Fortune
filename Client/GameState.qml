@@ -30,4 +30,13 @@ Item{
         font.pixelSize: 90
         color: "white"
     }
+
+    Text{
+        id: player1
+        anchors.top: parent.top
+        anchors.topMargin: 120
+        text: backEnd.textList[3] + " : " + backEnd.textList[4]
+        font.pixelSize: 90
+        color: "white"
+    }
 }

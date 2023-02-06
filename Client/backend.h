@@ -30,6 +30,7 @@ public:
     Q_INVOKABLE void updateWaitingRoom();
     Q_INVOKABLE void updateGameState();
     Q_INVOKABLE void startGame();
+    Q_INVOKABLE void exitGame();
     // void *pthread_waiting_room(void *arg);
 
 signals:

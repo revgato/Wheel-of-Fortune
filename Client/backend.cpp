@@ -97,6 +97,11 @@ void Backend::updateGameState()
     emit gameState();
 }
 
+void Backend::exitGame()
+{
+    exit(0);
+}
+
 void *pthread_waiting_room(void *arg)
 {
     free(arg);
@@ -111,9 +116,6 @@ void *pthread_waiting_room(void *arg)
 
         if (conn_msg.type == WAITING_ROOM){
             printf("New player joined\n");
-            // Append the new player to the list
-            // ****Core dump here****
-            // Backend::textList.append(conn_msg.data.waiting_room.player[conn_msg.data.waiting_room.joined-1].username);
             emit Backend::instance->userJoined();
         }
     }
@@ -130,6 +132,10 @@ void *pthread_game_state(void *arg)
     while (conn_msg.type != END_GAME)
     {
         receive_server();
+        if(bytes_received <= 0){
+            emit Backend::instance->connectionFailed();
+            pthread_cancel(pthread_self());
+        }
         if (conn_msg.type == GAME_STATE)
         {
             printf("Game state received\n");

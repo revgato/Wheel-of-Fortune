@@ -28,6 +28,9 @@ ApplicationWindow{
 
         onConnectionFailed: {
             console.log("Connection failed")
+            backEnd.exitGame()
+            // Close the game
+
             // Exit the game
             // Qt.quit()
         }
