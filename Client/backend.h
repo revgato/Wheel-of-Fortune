@@ -2,10 +2,10 @@
 #define BACKEND_H
 #include <QObject>
 
-extern "C" {
-    #include "utils.h"
+extern "C"
+{
+#include "utils.h"
 }
-
 
 class Backend : public QObject
 {
@@ -17,17 +17,19 @@ class Backend : public QObject
 public:
     static char server_ip[16];
     static int server_port;
+    static Backend *instance;
     // static QString text;
     static QStringList textList;
     explicit Backend(QObject *parent = nullptr);
+    ~Backend();
     // QString getText() const;
     QStringList getTextList() const;
     void setText(QString value);
     Q_INVOKABLE void connectToServer();
     Q_INVOKABLE void join(QString username_input);
-    
+ 
     // void *pthread_waiting_room(void *arg);
-    
+
 signals:
     void connectedToServer();
     void connectionFailed();

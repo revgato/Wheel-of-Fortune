@@ -6,6 +6,7 @@ extern "C"
 
 extern conn_msg_type conn_msg;
 extern char username[50];
+Backend *Backend::instance = nullptr;
 
 // QString Backend::text = "";
 QStringList Backend::textList;
@@ -14,6 +15,15 @@ int Backend::server_port = 5500;
 
 Backend::Backend(QObject *parent) : QObject(parent)
 {
+    if (Backend::instance == nullptr)
+    {
+        Backend::instance = this;
+    }
+}
+
+Backend::~Backend()
+{
+    delete Backend::instance;
 }
 
 void Backend::connectToServer()
@@ -67,7 +77,8 @@ void *pthread_waiting_room(void *arg)
         }
     }
     printf("All players joined\n");
-    // emit Backend::gameStart();
+    // emit Backend::instance->gameStart();
+    emit Backend::instance->waitingRoom();
     pthread_cancel(pthread_self());
 }
 

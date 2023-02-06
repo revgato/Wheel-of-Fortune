@@ -32,6 +32,8 @@ ApplicationWindow{
 
         onWaitingRoom:{
             console.log("Waiting room")
+            // Remove the current item
+            // stackView.pop()
             stackView.push("WaitingRoom.qml")
         }
 
