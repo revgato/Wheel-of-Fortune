@@ -9,6 +9,8 @@ extern char username[50];
 extern int bytes_received;
 Backend *Backend::instance = nullptr;
 
+pthread_mutex_t lock;
+
 // QString Backend::text = "";
 QStringList Backend::textList;
 char Backend::server_ip[16];
@@ -29,6 +31,8 @@ Backend::~Backend()
 
 void Backend::connectToServer()
 {
+    pthread_mutex_init(&lock, NULL);
+
     if (connect_to_server(Backend::server_ip, Backend::server_port) == 1)
     {
         emit connectedToServer();
@@ -93,15 +97,16 @@ void Backend::updateGameState()
         textList.append(QString::number(conn_msg.data.game_state.player[i].point));
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
-    sleep(SLEEP_TIME);
+    // sleep(SLEEP_TIME);
     emit gameState();
+    pthread_mutex_destroy(&lock);
 }
 
 void Backend::updateNotification()
 {
     textList.clear();
     textList.append(QString::fromStdString(conn_msg.data.notification));
-    sleep(SLEEP_TIME);
+    // sleep(SLEEP_TIME);
     emit notification();
 }
 
@@ -139,6 +144,7 @@ void *pthread_game_state(void *arg)
     pthread_detach(pthread_self());
     while (conn_msg.type != END_GAME)
     {
+        sleep(5);
         receive_server();
         if(bytes_received <= 0){
             emit Backend::instance->connectionFailed();
@@ -148,9 +154,11 @@ void *pthread_game_state(void *arg)
         {
             printf("Game state received\n");
             emit Backend::instance->updateGameStateSignal();
+            // sleep(SLEEP_TIME);
         }else if (conn_msg.type == NOTIFICATION){
             printf("Notification received: %s\n", conn_msg.data.notification);
             emit Backend::instance->updateNotificationSignal();
+            // sleep(SLEEP_TIME);
         }
         
     }
