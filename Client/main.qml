@@ -28,6 +28,8 @@ ApplicationWindow{
 
         onConnectionFailed: {
             console.log("Connection failed")
+            // Exit the game
+            // Qt.quit()
         }
 
         onWaitingRoom:{
@@ -40,18 +42,27 @@ ApplicationWindow{
         onRefuse: {
             console.log("Refused")
         }
-        
-        onGameStart: {
-            console.log("Game start")
-            stackView.push("GameState.qml")
-        }
+
 
         onUserJoined: {
             console.log("User joined")
             // stackView.push("WaitingRoom.qml")
             backEnd.updateWaitingRoom()
         }
+
+        onGameStart:{
+            console.log("Game start")
+            backEnd.startGame()
+        }
        
+        onGameState:{
+            console.log("Game state")
+            stackView.push("GameState.qml")
+        }
+
+        onUpdateGameStateSignal: {
+            console.log("Update game state")
+            backEnd.updateGameState()        }
     }
 
     Button{

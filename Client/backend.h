@@ -28,6 +28,8 @@ public:
     Q_INVOKABLE void connectToServer();
     Q_INVOKABLE void join(QString username_input);
     Q_INVOKABLE void updateWaitingRoom();
+    Q_INVOKABLE void updateGameState();
+    Q_INVOKABLE void startGame();
     // void *pthread_waiting_room(void *arg);
 
 signals:
@@ -35,10 +37,13 @@ signals:
     void connectionFailed();
     void waitingRoom();
     void refuse();
-    void gameStart();
+    void gameState();
     void userJoined();
+    void updateGameStateSignal();
+    void gameStart();
 };
 
 void *pthread_waiting_room(void *arg);
+void *pthread_game_state(void *arg);
 
 #endif // BACKEND_H
