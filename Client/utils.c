@@ -61,4 +61,14 @@ void send_server(){
     }
 }
 
+void receive_server(){
+    bytes_received = recv(client_sock, &conn_msg, sizeof(conn_msg), 0);
+    printf("[DEBUG] Receive %d bytes\n", bytes_received);
+    if (bytes_received < 0)
+    {
+        printf("Error: Cannot receive message from server!\n");
+        exit(1);
+    }
+}
+
 

@@ -34,6 +34,8 @@ Item{
 
         onClicked: {
             console.log("Joining game...")
+            backEnd.connectToServer()
+            backEnd.join(usernameInput.text)
         }
 
     }

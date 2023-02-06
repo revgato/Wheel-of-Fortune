@@ -18,6 +18,9 @@ int disconnect_from_server();
 
 void send_server();
 
+void receive_server();
+
+
 void print_sub_question(sub_question_type sub_question);
 
 void print_waiting_room(waiting_room_type waiting_room);

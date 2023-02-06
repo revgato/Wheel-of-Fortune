@@ -28,6 +28,16 @@ ApplicationWindow{
         onConnectionFailed: {
             console.log("Connection failed")
         }
+
+        onWaitingRoom:{
+            console.log("Waiting room")
+        }
+
+        onRefuse: {
+            console.log("Refused")
+        }
+
+        // onW
     }
 
     Button{
@@ -45,7 +55,9 @@ ApplicationWindow{
         }
     }
 
-    Component.onCompleted: {
-        backEnd.connectToServer()
+    // Handle user click exit
+    onClosing: {
+        // backEnd.disconnectFromServer()
+        console.log("Exit game")
     }
 }

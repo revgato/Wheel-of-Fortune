@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include "backend.h"
 
+// /home/revgato/Qt5.12.12/5.12.12/gcc_64/bin/qmake
 
 int main(int argc, char *argv[])
 {
@@ -12,7 +13,7 @@ int main(int argc, char *argv[])
         printf("Usage: %s <ip> <port>\n", argv[0]);
         return 0;
     }
-    Backend::server_ip = argv[1];
+    strcpy(Backend::server_ip, argv[1]);
     Backend::server_port = atoi(argv[2]);
 
     QGuiApplication app(argc, argv);
