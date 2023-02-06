@@ -71,17 +71,17 @@ void receive_server(){
     }
 }
 
-void *pthread_waiting_room(void *arg)
-{
-    free(arg);
-    pthread_detach(pthread_self());
-    while (conn_msg.data.waiting_room.joined != PLAYER_PER_ROOM){
-        receive_server();
-        if (conn_msg.type == WAITING_ROOM){
-            printf("New player joined\n");
-        }
-    }
-    printf("All players joined\n");
-    pthread_cancel(pthread_self());
-}
+// void *pthread_waiting_room(void *arg)
+// {
+//     free(arg);
+//     pthread_detach(pthread_self());
+//     while (conn_msg.data.waiting_room.joined != PLAYER_PER_ROOM){
+//         receive_server();
+//         if (conn_msg.type == WAITING_ROOM){
+//             printf("New player joined\n");
+//         }
+//     }
+//     printf("All players joined\n");
+//     pthread_cancel(pthread_self());
+// }
 

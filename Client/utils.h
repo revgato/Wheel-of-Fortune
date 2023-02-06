@@ -21,7 +21,7 @@ void send_server();
 
 void receive_server();
 
-void *pthread_waiting_room(void *arg);
+// void *pthread_waiting_room(void *arg);
 
 
 void print_sub_question(sub_question_type sub_question);

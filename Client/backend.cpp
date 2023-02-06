@@ -56,15 +56,20 @@ void Backend::join(QString username_input)
     // emit gameStart();
 }
 
-// QString Backend::getText() const
-// {
-//     return Backend::text;
-// }
-
-// void Backend::setText(QString text)
-// {
-//     Backend::text = text;
-// }
+void *pthread_waiting_room(void *arg)
+{
+    free(arg);
+    pthread_detach(pthread_self());
+    while (conn_msg.data.waiting_room.joined != PLAYER_PER_ROOM){
+        receive_server();
+        if (conn_msg.type == WAITING_ROOM){
+            printf("New player joined\n");
+        }
+    }
+    printf("All players joined\n");
+    // emit Backend::gameStart();
+    pthread_cancel(pthread_self());
+}
 
 QStringList Backend::getTextList() const
 {
