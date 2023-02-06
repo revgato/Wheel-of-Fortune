@@ -79,7 +79,7 @@ void Backend::updateWaitingRoom()
     {
         textList.append(conn_msg.data.waiting_room.player[i].username);
     }
-    sleep(3);
+    sleep(SLEEP_TIME);
     emit waitingRoom();
 }
 
@@ -93,8 +93,16 @@ void Backend::updateGameState()
         textList.append(QString::number(conn_msg.data.game_state.player[i].point));
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
-    sleep(3);
+    sleep(SLEEP_TIME);
     emit gameState();
+}
+
+void Backend::updateNotification()
+{
+    textList.clear();
+    textList.append(QString::fromStdString(conn_msg.data.notification));
+    sleep(SLEEP_TIME);
+    emit notification();
 }
 
 void Backend::exitGame()
@@ -140,7 +148,11 @@ void *pthread_game_state(void *arg)
         {
             printf("Game state received\n");
             emit Backend::instance->updateGameStateSignal();
+        }else if (conn_msg.type == NOTIFICATION){
+            printf("Notification received: %s\n", conn_msg.data.notification);
+            emit Backend::instance->updateNotificationSignal();
         }
+        
     }
     pthread_cancel(pthread_self());
 }

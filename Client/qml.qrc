@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MenuStart.qml</file>
+        <file>Notification.qml</file>
         <file>WaitingRoom.qml</file>
         <file>freefire.jpg</file>
         <file>GameState.qml</file>

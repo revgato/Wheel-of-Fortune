@@ -29,6 +29,7 @@ public:
     Q_INVOKABLE void join(QString username_input);
     Q_INVOKABLE void updateWaitingRoom();
     Q_INVOKABLE void updateGameState();
+    Q_INVOKABLE void updateNotification();
     Q_INVOKABLE void startGame();
     Q_INVOKABLE void exitGame();
     // void *pthread_waiting_room(void *arg);
@@ -41,7 +42,9 @@ signals:
     void gameState();
     void userJoined();
     void updateGameStateSignal();
+    void updateNotificationSignal();
     void gameStart();
+    void notification();
 };
 
 void *pthread_waiting_room(void *arg);

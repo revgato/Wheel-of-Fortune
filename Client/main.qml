@@ -39,7 +39,7 @@ ApplicationWindow{
             console.log("Waiting room")
             // Remove the current item
             // stackView.pop()
-            stackView.push("WaitingRoom.qml")
+            stackView.replace("WaitingRoom.qml")
         }
 
         onRefuse: {
@@ -49,7 +49,7 @@ ApplicationWindow{
 
         onUserJoined: {
             console.log("User joined")
-            // stackView.push("WaitingRoom.qml")
+            // stackView.replace("WaitingRoom.qml")
             backEnd.updateWaitingRoom()
         }
 
@@ -60,12 +60,23 @@ ApplicationWindow{
        
         onGameState:{
             console.log("Game state")
-            stackView.push("GameState.qml")
+            stackView.replace("GameState.qml")
         }
 
         onUpdateGameStateSignal: {
             console.log("Update game state")
-            backEnd.updateGameState()        }
+            backEnd.updateGameState()        
+        }
+
+        onUpdateNotificationSignal:{
+            console.log("Update notification")
+            backEnd.updateNotification()
+        }
+
+        onNotification:{
+            console.log("Notification")
+            stackView.replace("Notification.qml")
+        }
     }
 
     Button{
