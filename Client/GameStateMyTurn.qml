@@ -57,9 +57,9 @@ Item{
         anchors.bottomMargin: 20
         width: 200
         height: 50
-        text: "Guess"
         onClicked: {
-            console.log(guessButton.text)
+            console.log(guessChar.text)
+            backEnd.guessChar(guessChar.text)
         }
     }
 }

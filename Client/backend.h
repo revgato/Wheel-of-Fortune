@@ -33,6 +33,7 @@ public:
     Q_INVOKABLE void updateNotification();
     Q_INVOKABLE void startGame();
     Q_INVOKABLE void exitGame();
+    Q_INVOKABLE void guessChar(QString guess);
     // void *pthread_waiting_room(void *arg);
 
 signals:

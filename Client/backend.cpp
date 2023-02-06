@@ -7,6 +7,7 @@ extern "C"
 extern conn_msg_type conn_msg;
 extern char username[50];
 extern int bytes_received;
+extern int bytes_sent;
 Backend *Backend::instance = nullptr;
 
 // pthread_mutex_t lock;
@@ -124,6 +125,18 @@ void Backend::updateNotification()
     textList.append(QString::fromStdString(conn_msg.data.notification));
     // sleep(SLEEP_TIME);
     emit notification();
+}
+
+void Backend::guessChar(QString guess)
+{
+    conn_msg.data.game_state.guess_char = guess.toStdString().c_str()[0];
+    conn_msg.type = GUESS_CHAR;
+    send_server();
+    if (bytes_sent <= 0)
+    {
+        printf("Server disconnected\n");
+        emit connectionFailed();
+    }
 }
 
 void Backend::exitGame()
