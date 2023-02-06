@@ -6,6 +6,7 @@
         <file>WaitingRoom.qml</file>
         <file>freefire.jpg</file>
         <file>GameState.qml</file>
+        <file>GameStateMyTurn.qml</file>
 
     </qresource>
 </RCC>
