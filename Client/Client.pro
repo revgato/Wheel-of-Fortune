@@ -7,10 +7,11 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        client.c \
         communicate.c \
         game.c \
-        main.cpp
+        main.cpp \
+        utils.c \
+        backend.cpp
 
 RESOURCES += qml.qrc
 
@@ -28,4 +29,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     backend.h \
     communicate.h \
-    game.h
+    game.h \
+    utils.h

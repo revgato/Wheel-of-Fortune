@@ -1,44 +1,9 @@
-#include <stdio.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <string.h>
-#include "game.h"
-#include "communicate.h"
-#include <ctype.h>
-
-conn_data_type conn_data;
-conn_msg_type conn_msg;
-char username[50];
-char guess_char;
-int client_sock;
 
 void wait()
 {
     sleep(2);
 }
 
-void send_server(int connfd, conn_msg_type conn_msg);
-
-void print_title();
-
-void print_sub_question(sub_question_type sub_question);
-
-void print_waiting_room(waiting_room_type waiting_room);
-
-void print_game_state(game_state_type game_state);
-
-void handle_game_state(game_state_type *game_state);
-
-char receive_answer();
-
-void handle_sub_question(sub_question_type *sub_question);
-
-void print_notification(char *notification);
-
-int is_valid_guesschar(game_state_type game_state);
 
 int main(int argc, char *argv[])
 {
@@ -47,8 +12,7 @@ int main(int argc, char *argv[])
         printf("Usage: %s <Server IP> <Server Port>\n", argv[0]);
         return 0;
     }
-    struct sockaddr_in server_addr;
-    int bytes_sent, bytes_received, sin_size;
+
 
     // Step 1: Construct a TCP socket
     if ((client_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
