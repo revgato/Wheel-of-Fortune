@@ -43,8 +43,7 @@ ApplicationWindow{
         
         onGameStart: {
             console.log("Game start")
-            // Update WaitingRoom screen
-            stackView.push("WaitingRoom.qml")
+            stackView.push("GameState.qml")
         }
 
         onUserJoined: {

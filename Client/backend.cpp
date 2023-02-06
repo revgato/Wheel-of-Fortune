@@ -73,6 +73,7 @@ void Backend::updateWaitingRoom()
     {
         textList.append(conn_msg.data.waiting_room.player[i].username);
     }
+    sleep(3);
     emit waitingRoom();
 }
 
@@ -95,6 +96,7 @@ void *pthread_waiting_room(void *arg)
     // emit Backend::instance->waitingRoom();
     pthread_cancel(pthread_self());
 }
+
 
 QStringList Backend::getTextList() const
 {
