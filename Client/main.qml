@@ -43,14 +43,15 @@ ApplicationWindow{
         
         onGameStart: {
             console.log("Game start")
-            // stackView.push("Game.qml")
+            // Update WaitingRoom screen
+            stackView.push("WaitingRoom.qml")
         }
-        // onTextChanged: {
-        //     console.log("Text changed")
-        //     waitingRoom.show_username0 = true
-        // }
 
-        // onW
+        onUserJoined: {
+            console.log("User joined")
+            stackView.push("WaitingRoom.qml")
+        }
+       
     }
 
     Button{

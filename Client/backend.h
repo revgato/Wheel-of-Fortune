@@ -36,6 +36,7 @@ signals:
     void waitingRoom();
     void refuse();
     void gameStart();
+    void userJoined();
 };
 
 void *pthread_waiting_room(void *arg);
