@@ -267,6 +267,17 @@ Item{
             }
         }
     }
+
+    Text{
+        id: guessCharSubQuestionNotification
+        x: 377
+        y: 530
+        visible: backEnd.textList[6] !== undefined
+        text: backEnd.textList[6]
+        font.pixelSize: 20
+        color: "white"
+        font.weight: Font.Bold
+    }
 }
 
 /*##^##

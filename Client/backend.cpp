@@ -221,6 +221,19 @@ void Backend::guessChar(QString guess)
 
 void Backend::guessCharSubQuestion(QString guess)
 {
+    char guess_char = toupper(guess.toStdString().c_str()[0]);
+    // If the guess is not A, B or C
+    if (guess_char < 'A' || guess_char > 'C')
+    {
+        if (textList.size() > 6)
+        {
+            textList.removeLast();
+        }
+        // textList.clear();
+        textList.append("CHỈ ĐƯỢC NHẬP A, B HOẶC C");
+        emit subQuestion();
+        return;
+    }
     conn_msg.data.sub_question.guess = toupper(guess.toStdString().c_str()[0]);
     conn_msg.type = SUB_QUESTION;
     send_server();

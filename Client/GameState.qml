@@ -310,7 +310,7 @@ Item{
         anchors.bottomMargin: -562
         text: backEnd.textList[10]
         anchors.horizontalCenterOffset: 18
-        font.pixelSize: 30
+        font.pixelSize: 20
         color: "white"
         font.weight: Font.Bold 
     }
