@@ -13,19 +13,23 @@ Item{
         source: "qrc:/notification.jpg"
     }
     Rectangle{
-        width: 720
+        width: parent.width
+        anchors.top: parent.top
+        anchors.topMargin: 300
+        // anchors.horizontalCenter: parent.horizontalCenter
         height: 360
-        color: "black"
+        color: "#2e3436"
         Text{
             id: textNotification
-        width: 720
-        height: 200
-        wrapMode: Text.WordWrap
-        anchors.centerIn: parent
-        text: backEnd.textList[0]
-        font.pixelSize: 100
+            width: 720
+            // height: 300
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            wrapMode: Text.WordWrap
+            text: backEnd.textList[0]
+            font.pixelSize: 40
 
-        color: "white"
+            color: "white"
         }
 
     }
