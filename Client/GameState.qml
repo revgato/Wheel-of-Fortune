@@ -129,7 +129,7 @@ Item{
         anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
         anchors.left: player0.right
-        anchors.leftMargin: 350
+        anchors.leftMargin: 300
         Rectangle{
             id: rectPlayer1Username
             width: 200
@@ -174,7 +174,7 @@ Item{
         anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
         anchors.left: player1.right
-        anchors.leftMargin: 600
+        anchors.leftMargin: 300
         Rectangle{
             id: rectPlayer2Username
             width: 200
