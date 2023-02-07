@@ -17,7 +17,7 @@ Item{
     TextField{
         id: usernameInput
         anchors.top: parent.top
-        anchors.topMargin: 400
+        anchors.topMargin: 500
         anchors.horizontalCenter: parent.horizontalCenter
         width: 300
         height: 50
@@ -36,7 +36,8 @@ Item{
 
         Text{
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Join"
+            anchors.verticalCenter: parent.verticalCenter
+            text: "CHƠI"
             color: "black"
             font.pixelSize: 30
         }
@@ -48,12 +49,38 @@ Item{
         }
     }
 
-    Text{
-        id: notificationText
+    // Beautify text box contain notification
+    Rectangle{
+        id: notificationBox
         visible: backEnd.textList[0] !== undefined
         anchors.top: joinButton.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
-        text: backEnd.textList[0]
+        anchors.topMargin: 40
+        width: 15 * backEnd.textList[0].length
+        height: 50
+        color: "black"
+        opacity: 0.8
+        radius: 10
+
+        Text{
+            id: notificationText
+            visible: backEnd.textList[0] !== undefined
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            text: backEnd.textList[0]
+            color: "white"
+            font.pixelSize: 30
+        }
     }
+
+    // Text{
+    //     id: notificationText
+    //     visible: backEnd.textList[0] !== undefined
+    //     anchors.top: joinButton.bottom
+    //     anchors.horizontalCenter: parent.horizontalCenter
+    //     anchors.topMargin: 40
+    //     text: backEnd.textList[0]
+    //     color: "white"
+    //     font.pixelSize: 30
+    // }
 }
