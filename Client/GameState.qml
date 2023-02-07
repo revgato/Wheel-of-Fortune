@@ -21,6 +21,7 @@ Item{
         anchors.topMargin: 20
         text: "CHIẾC NÓN KỲ DIỆU"
         font.pixelSize: 50
+        font.weight: Font.Bold
         color: "white"
     }
     Rectangle{
@@ -31,7 +32,7 @@ Item{
         width: backEnd.textList[0].length * 45
         height: 100
         color: "black"
-        opacity: 0.5
+        opacity: 1
         Text{
             id: crossWord
             opacity: 1
@@ -43,42 +44,91 @@ Item{
         }
     }
 
-    
-    Text{
-        id: sector
-        anchors.left: rectCrossWord.right
-        anchors.leftMargin: 20
-        anchors.top: wheelOfFortuneText.bottom
-        anchors.topMargin: 20
-        text: "Sector: " + backEnd.textList[1]
-        font.pixelSize: 20
-        color: "white"
+    Rectangle{
+        id: rectSector
+        y: 605
+        anchors.left: parent.left
+        anchors.leftMargin: 56
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 45
+        width: 227
+        height: 118
+        color: "#4e9a06"
+        opacity: 1
+        Text{
+            id: sector
+            opacity: 1
+            anchors.horizontalCenter: rectSector.horizontalCenter
+            anchors.verticalCenter: rectSector.verticalCenter
+            text: backEnd.textList[1]
+            font.pixelSize: 60
+            // Bold
+            font.weight: Font.Bold
+            color: "#2e3436"
+        }
     }
 
-
-    Text{
-        id: turn
-        anchors.left: sector.right
-        anchors.leftMargin: 20
-        anchors.top: wheelOfFortuneText.bottom
-        anchors.topMargin: 20
-        text: "Turn: " + backEnd.textList[2]
-        font.pixelSize: 20
-        color: "white"
-    }
 
     // Text{
-    //     id: player0
-    //     anchors.top: rectCrossWord.bottom
-    //     anchors.topMargin: 20
-    //     anchors.left: parent.left
+    //     id: turn
+    //     anchors.left: wheelOfFortuneText.right
     //     anchors.leftMargin: 20
-    //     text: backEnd.textList[3] + " : " + backEnd.textList[4]
-    //     font.pixelSize: 90
+    //     anchors.top: wheelOfFortuneText.bottom
+    //     anchors.topMargin: 20
+    //     text: "Turn: " + backEnd.textList[2]
+    //     font.pixelSize: 20
     //     color: "white"
     // }
 
-    // 2 rectangle. 1 rectangle for player0 username, 1 rectangle for player0 score
+    Item{
+        id: turn
+        anchors.right: parent.right
+        anchors.rightMargin: 250
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 170
+        Rectangle{
+            id: rect1Turn
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 1
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: rect1TurnText
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Current Turn"
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rect2Turn
+            anchors.top: rect1Turn.bottom
+            anchors.topMargin: 0
+            anchors.left: rect1Turn.left
+            width: rect1Turn.width
+            height: 100
+            color: "black"
+            opacity: 1
+            Text{
+                id: rect2TurnText
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[2]
+                font.pixelSize: 60
+                color: "white"
+                // Bold
+                font.weight: Font.Bold
+            }
+        }
+    }
+
+//////////////////////////////
+
     Item{
         id: player0
         anchors.top: rectCrossWord.bottom
@@ -90,7 +140,7 @@ Item{
             width: 200
             height: 50
             color: "black"
-            opacity: 0.5
+            opacity: 1
             border.color: "white"
             border.width: 3
             Text{
@@ -111,7 +161,7 @@ Item{
             width: rectPlayer0Username.width
             height: 100
             color: "black"
-            opacity: 0.5
+            opacity: 1
             Text{
                 id: player0Score
                 opacity: 1
@@ -135,7 +185,7 @@ Item{
             width: 200
             height: 50
             color: "black"
-            opacity: 0.5
+            opacity: 1
             border.color: "white"
             border.width: 3
             Text{
@@ -156,7 +206,7 @@ Item{
             width: rectPlayer1Username.width
             height: 100
             color: "black"
-            opacity: 0.5
+            opacity: 1
             Text{
                 id: player1Score
                 opacity: 1
@@ -180,7 +230,7 @@ Item{
             width: 200
             height: 50
             color: "black"
-            opacity: 0.5
+            opacity: 1
             border.color: "white"
             border.width: 3
             Text{
@@ -201,7 +251,7 @@ Item{
             width: rectPlayer2Username.width
             height: 100
             color: "black"
-            opacity: 0.5
+            opacity: 1
             Text{
                 id: player2Score
                 opacity: 1
@@ -214,28 +264,6 @@ Item{
         }
     }
 
-    // Text{
-    //     id: player1
-    //     anchors.top: player0.bottom
-    //     anchors.topMargin: 20
-    //     anchors.left: parent.left
-    //     anchors.leftMargin: 20
-    //     text: backEnd.textList[5] + " : " + backEnd.textList[6]
-    //     font.pixelSize: 90
-    //     color: "white"
-    // }
-
-    // Text{
-    //     id: player2
-    //     anchors.top: player1.bottom
-    //     anchors.topMargin: 20
-    //     anchors.left: parent.left
-    //     anchors.leftMargin: 20
-    //     visible: backEnd.textList[7] !== undefined && backEnd.textList[7] !== "my_turn"
-    //     text: backEnd.textList[7] + " : " + backEnd.textList[8]
-    //     font.pixelSize: 90
-    //     color: "white"
-    // }
 
     Item{
         id: myTurn
