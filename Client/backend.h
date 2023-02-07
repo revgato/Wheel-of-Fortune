@@ -37,8 +37,7 @@ public:
     Q_INVOKABLE void exitGame();
     Q_INVOKABLE void guessChar(QString guess);
     Q_INVOKABLE void guessCharSubQuestion(QString guess);
-    // void *pthread_waiting_room(void *arg);
-
+    Q_INVOKABLE void updateEndGame();
 signals:
     void connectedToServer();
     void connectionFailed();
@@ -51,6 +50,7 @@ signals:
     void updateNotificationSignal();
     void updateSubQuestionSignal();
     void updateSubQuestionMyTurnSignal();
+    void updateEndGameSignal();
     void gameStart();
     void gameStateMyTurn();
     void subQuestionMyTurn();

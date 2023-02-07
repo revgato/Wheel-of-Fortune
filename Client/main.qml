@@ -107,6 +107,11 @@ ApplicationWindow{
             console.log("Sub question my turn")
             stackView.replace("SubQuestionMyTurn.qml")
         }
+
+        onUpdateEndGameSignal:{
+            console.log("Update end game")
+            backEnd.updateEndGame()   
+        }
     }
 
     Button{

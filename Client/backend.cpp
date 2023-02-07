@@ -149,6 +149,12 @@ void Backend::updateSubQuestionMyTurn()
     emit subQuestionMyTurn();
 }
 
+void Backend::updateEndGame()
+{
+    textList.clear();
+    // TODO: configure server.c and the winner
+}
+
 
 
 
@@ -249,6 +255,11 @@ void *pthread_game_state(void *arg)
             else{
                 emit Backend::instance->updateSubQuestionSignal();
             }
+        }
+        else if (conn_msg.type == END_GAME)
+        {
+            printf("Game ended\n");
+            emit Backend::instance->updateEndGameSignal();
         }
     }
     pthread_cancel(pthread_self());
