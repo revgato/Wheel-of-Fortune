@@ -27,10 +27,19 @@ Item{
 
     Button{
         id: joinButton
+        enabled: usernameInput.text.length > 0
         anchors.top: usernameInput.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 20
-        text: "Join"
+            width: 4 * 30
+            height: 30
+
+        Text{
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Join"
+            color: "black"
+            font.pixelSize: 30
+        }
 
         onClicked: {
             console.log("Joining game...")
