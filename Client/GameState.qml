@@ -23,7 +23,7 @@ Item{
         font.pixelSize: 50
     }
     Rectangle{
-        id: rectCrossword
+        id: rectCrossWord
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: wheelOfFortuneText.bottom
         anchors.topMargin: 20
@@ -32,7 +32,7 @@ Item{
         color: "red"
         Text{
             id: crossWord
-            // anchors.centerIn: parent
+            anchors.horizontalCenter: rectCrossWord.horizontalCenter
             text: backEnd.textList[0]
             font.pixelSize: 70
             color: "white"
