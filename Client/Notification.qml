@@ -14,10 +14,13 @@ Item{
     }
 
     Text{
-        id: text
+        id: textNotification
+        width: 720
+        height: 200
+        // wrapMode: Text.WordWrap
         anchors.centerIn: parent
         text: backEnd.textList[0]
-        font.pixelSize: 100
+        font.pixelSize: 50
         color: "white"
     }
 }
