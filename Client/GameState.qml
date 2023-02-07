@@ -11,7 +11,7 @@ Item{
     BorderImage{
         id: borderImage
         anchors.fill: parent
-        source: "qrc:/freefire.jpg"
+        source: "qrc:/gameState.jpg"
     }
 
     Text{

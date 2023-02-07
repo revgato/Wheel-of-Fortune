@@ -4,7 +4,12 @@
         <file>MenuStart.qml</file>
         <file>Notification.qml</file>
         <file>WaitingRoom.qml</file>
-        <file>freefire.jpg</file>
+        <file>startMenu.jpg</file>
+        <file>waitingRoom.jpg</file>
+        <file>gameState.jpg</file>
+        <file>subQuestion.jpg</file>
+        <file>notification.jpg</file>
+        <file>summary.jpg</file>
         <file>GameState.qml</file>
         <file>SubQuestion.qml</file>
         <file>EndGame.qml</file>

@@ -10,7 +10,7 @@ Item{
     BorderImage{
         id: borderImage
         anchors.fill: parent
-        source: "qrc:/freefire.jpg"
+        source: "qrc:/waitingRoom.jpg"
     }
 
     Text{
