@@ -15,39 +15,175 @@ Item{
     }
 
     Text{
-        id: question
-        anchors.centerIn: parent
-        text: backEnd.textList[0]
-        font.pixelSize: 70
-        color: "white"
-    }
-
-    Text{
-        id: answer1
+        id: subQuestionText
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 20
-        text: "A. " + backEnd.textList[1]
-        font.pixelSize: 90
+        text: "CÂU HỎI PHỤ"
+        font.pixelSize: 50
+        font.weight: Font.Bold
         color: "white"
     }
 
-    Text{
+    Rectangle{
+        id: rectQuestion
+        anchors.top: subQuestionText.top
+        anchors.topMargin: 208
+        anchors.centerIn: parent
+        width: 800
+        height: 167
+        color: "#2e3436"
+        anchors.verticalCenterOffset: -155
+        anchors.horizontalCenterOffset: 0
+        Text{
+            id: question
+            anchors.centerIn: parent
+            text: backEnd.textList[0]
+            font.pixelSize: 30
+            // warp
+            wrapMode: Text.WordWrap
+            color: "white"
+        }
+    }
+
+    Item{
+        id: answer1
+        anchors.top: rectQuestion.bottom
+        anchors.topMargin: 40
+        anchors.left: parent.left
+        anchors.leftMargin: 100
+        Rectangle{
+            id: rect1
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 1
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: textA
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: "A"
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rectAnswer1
+            anchors.top: rect1.bottom
+            anchors.topMargin: 0
+            anchors.left: rect1.left
+            width: rect1.width
+            height: 100
+            color: "black"
+            opacity: 1
+            Text{
+                id: textAnwser1
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[1]
+                font.pixelSize: 30
+                wrapMode: Text.WordWrap
+                color: "white"
+            }
+        }
+    }
+
+    Item{
         id: answer2
-        anchors.top: parent.top
-        anchors.topMargin: 120
-        text: "B. " + backEnd.textList[2]
-        font.pixelSize: 90
-        color: "white"
+        anchors.top: rectQuestion.bottom
+        anchors.topMargin: 40
+        anchors.left: answer1.right
+        anchors.leftMargin: 300
+        Rectangle{
+            id: rect2
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 1
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: textB
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: "B"
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rectAnswer2
+            anchors.top: rect2.bottom
+            anchors.topMargin: 0
+            anchors.left: rect2.left
+            width: rect2.width
+            height: 100
+            color: "black"
+            opacity: 1
+            Text{
+                id: textAnwser2
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[2]
+                font.pixelSize: 30
+                wrapMode: Text.WordWrap
+                color: "white"
+            }
+        }
     }
-
-    Text{
+    
+    Item{
         id: answer3
-        anchors.top: parent.top
-        anchors.topMargin: 220
-        text: "C. " + backEnd.textList[3]
-        font.pixelSize: 90
-        color: "white"
+        anchors.top: rectQuestion.bottom
+        anchors.topMargin: 40
+        anchors.left: answer2.right
+        anchors.leftMargin: 300
+        Rectangle{
+            id: rect3
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 1
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: textC
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: "C"
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rectAnswer3
+            anchors.top: rect3.bottom
+            anchors.topMargin: 0
+            anchors.left: rect3.left
+            width: rect3.width
+            height: 100
+            color: "black"
+            opacity: 1
+            Text{
+                id: textAnwser3
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[3]
+                font.pixelSize: 30
+                wrapMode: Text.WordWrap
+                color: "white"
+            }
+        }
     }
+   
 
     Item{
 
@@ -86,7 +222,6 @@ Item{
 
 /*##^##
 Designer {
-    D{i:1;invisible:true}D{i:2;invisible:true}D{i:3;invisible:true}D{i:4;invisible:true}
-D{i:5;invisible:true}
+    D{i:1;invisible:true}
 }
 ##^##*/
