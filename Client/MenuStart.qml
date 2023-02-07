@@ -32,7 +32,7 @@ Item{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 20
             width: 4 * 30
-            height: 30
+            height: 50
 
         Text{
             anchors.horizontalCenter: parent.horizontalCenter

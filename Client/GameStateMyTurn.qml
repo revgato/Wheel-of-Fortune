@@ -3,11 +3,9 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
 Item{
-    id: gameState
-    anchors.fill: parent
-    width: 1024
-    height: 768
-
+    id: gameStateMyTurn
+    
+    // ---------GameState.qml----------
     BorderImage{
         id: borderImage
         anchors.fill: parent
@@ -22,21 +20,27 @@ Item{
         text: "Wheel of Fortune"
         font.pixelSize: 50
     }
-
-    Text{
-        id: crossWord
-        // anchors.centerIn: parent
+    Rectangle{
+        id: rectCrossWord
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: wheelOfFortuneText.bottom
         anchors.topMargin: 20
-        text: backEnd.textList[0]
-        font.pixelSize: 70
-        color: "white"
+        width: backEnd.textList[0].length * 70
+        height: 100
+        color: "red"
+        Text{
+            id: crossWord
+            anchors.horizontalCenter: rectCrossWord.horizontalCenter
+            text: backEnd.textList[0]
+            font.pixelSize: 70
+            color: "white"
+        }
     }
 
+    
     Text{
         id: sector
-        anchors.left: crossWord.right
+        anchors.left: rectCrossWord.right
         anchors.leftMargin: 20
         anchors.top: wheelOfFortuneText.bottom
         anchors.topMargin: 20
@@ -44,6 +48,7 @@ Item{
         font.pixelSize: 20
         color: "white"
     }
+
 
     Text{
         id: turn
@@ -58,7 +63,7 @@ Item{
 
     Text{
         id: player0
-        anchors.top: crossWord.bottom
+        anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 20
@@ -84,14 +89,17 @@ Item{
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 20
+        visible: backEnd.textList[7] !== undefined
         text: backEnd.textList[7] + " : " + backEnd.textList[8]
         font.pixelSize: 90
         color: "white"
     }
 
+    // ---------GameState.qml----------
+
     TextField{
         id: guessChar
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenter: player2.horizontalCenter
         anchors.top: player2.bottom
         anchors.topMargin: 20
         width: 200
@@ -101,11 +109,20 @@ Item{
 
     Button{
         id: guessButton
+        enabled: guessChar.text.length > 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: guessChar.bottom
         anchors.bottomMargin: 20
-        width: 200
+        width: 5 * 30
         height: 50
+
+        Text{
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "Guess"
+            color: "black"
+            font.pixelSize: 30
+        }
+
         onClicked: {
             console.log(guessChar.text)
             backEnd.guessChar(guessChar.text)
