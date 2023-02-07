@@ -34,7 +34,10 @@ Backend::~Backend()
 void Backend::connectToServer()
 {
     // pthread_mutex_init(&lock, NULL);
-
+    if (bytes_received > 0){
+        return;
+    }
+    
     if (connect_to_server(Backend::server_ip, Backend::server_port) == 1)
     {
         emit connectedToServer();
@@ -47,6 +50,7 @@ void Backend::connectToServer()
 
 void Backend::join(QString username_input)
 {
+    textList.clear();
     strcpy(username, username_input.toStdString().c_str());
     conn_msg.data.player = init_player(username, -1);
     conn_msg.type = JOIN;
@@ -62,15 +66,14 @@ void Backend::join(QString username_input)
         }
         // Backend::text = QString::fromStdString(conn_msg.data.waiting_room.player[0].username);
         emit waitingRoom();
+        pthread_create(&tid, NULL, &pthread_waiting_room, NULL);
     }
     else
     {
+        textList.clear();
+        textList.append(QString::fromStdString(conn_msg.data.notification));
         emit refuse();
     }
-    pthread_create(&tid, NULL, &pthread_waiting_room, NULL);
-    // Wait for the thread to finish
-    // pthread_join(tid, NULL);
-    // emit gameStart();
 }
 
 void Backend::startGame()
@@ -103,12 +106,12 @@ void Backend::updateGameState()
         textList.append(QString::number(conn_msg.data.game_state.player[i].point));
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
-    if (my_turn){
+    if (my_turn)
+    {
         textList.append("my_turn");
     }
     emit gameState();
 }
-
 
 void Backend::updateNotification()
 {
@@ -124,7 +127,8 @@ void Backend::updateSubQuestion()
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
-    if(my_turn){
+    if (my_turn)
+    {
         textList.append("my_turn");
     }
     emit subQuestion();
@@ -146,20 +150,22 @@ void Backend::updateEndGame()
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
     // last_line is last line of conn_msg.data.game_state.game_message
-    for (int i = 0; i<strlen(conn_msg.data.game_state.game_message) - 2; i++)
+    for (int i = 0; i < strlen(conn_msg.data.game_state.game_message) - 2; i++)
     {
-        if (conn_msg.data.game_state.game_message[i] == '\n'){
-            poiter_last_line = &conn_msg.data.game_state.game_message[i+1];
+        if (conn_msg.data.game_state.game_message[i] == '\n')
+        {
+            poiter_last_line = &conn_msg.data.game_state.game_message[i + 1];
         }
     }
     strcpy(last_line, poiter_last_line);
-    
+
     // Winner is last word of last_line
     j = 0;
-    for (int i = 0; i<strlen(last_line) - 1; i++)
+    for (int i = 0; i < strlen(last_line) - 1; i++)
     {
-        if (last_line[i] == ' '){
-            poiter_winner = &last_line[i+1];
+        if (last_line[i] == ' ')
+        {
+            poiter_winner = &last_line[i + 1];
         }
     }
     strcpy(winner, poiter_winner);
@@ -167,9 +173,6 @@ void Backend::updateEndGame()
     emit endGame();
     // TODO: configure server.c and the winner
 }
-
-
-
 
 void Backend::guessChar(QString guess)
 {
@@ -261,10 +264,12 @@ void *pthread_game_state(void *arg)
         {
             printf("Sub question received: %s\n", conn_msg.data.sub_question.question);
             // If current player is my turn
-            if (strcmp(conn_msg.data.sub_question.username, username) == 0){
+            if (strcmp(conn_msg.data.sub_question.username, username) == 0)
+            {
                 my_turn = 1;
             }
-            else{
+            else
+            {
                 my_turn = 0;
             }
             emit Backend::instance->updateSubQuestionSignal();
@@ -280,7 +285,6 @@ void *pthread_game_state(void *arg)
     pthread_cancel(pthread_self());
 }
 // pthread_mutex_destroy(&lock);
-
 
 QStringList Backend::getTextList() const
 {

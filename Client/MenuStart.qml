@@ -46,6 +46,14 @@ Item{
             backEnd.connectToServer()
             backEnd.join(usernameInput.text)
         }
+    }
 
+    Text{
+        id: notificationText
+        visible: backEnd.textList[0] !== undefined
+        anchors.top: joinButton.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: 20
+        text: backEnd.textList[0]
     }
 }

@@ -44,6 +44,7 @@ ApplicationWindow{
 
         onRefuse: {
             console.log("Refused")
+            stackView.replace("MenuStart.qml")
         }
 
 
