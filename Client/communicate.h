@@ -7,7 +7,7 @@
 #define BUFF_SIZE 1024
 #define BACKLOG 30 // Maximum number of client can connect to server
 #define WAIT_TIME 15
-#define SLEEP_TIME 5
+#define SLEEP_TIME 0
 // Define communicate message
 typedef enum conn_msg_type_type_t
 {

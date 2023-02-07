@@ -290,7 +290,7 @@ void *pthread_game_state(void *arg)
         {
             printf("Game ended\n");
             emit Backend::instance->updateEndGameSignal();
-            sleep(SLEEP_TIME);
+            sleep(5);
             break;
         }
     }
