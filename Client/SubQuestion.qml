@@ -51,25 +51,29 @@ Item{
 
     Item{
 
-        // visible: true
         visible: backEnd.textList[4] !== undefined
-
 
         TextField{
             id: guessCharSubQuestion
-            anchors.horizontalCenter: question.horizontalCenter
-            anchors.top: answer3.bottom
-            anchors.bottomMargin: 20
-            width: 200
+            x: 408
+            y: 572
+            width: 255
             height: 50
             placeholderText: "Guess A, B or C"
         }
 
         Button{
             id: guessButtonSubQuestion
-            anchors.horizontalCenter: guessCharSubQuestion.horizontalCenter
-            anchors.top: guessCharSubQuestion.bottom
-            anchors.bottomMargin: 20
+            Text{
+                text: "GUESS"
+                font.pixelSize: 30
+                color: "Black"
+                // Bold
+                anchors.centerIn: parent
+                font.weight: Font.Bold
+            }
+            x: 436
+            y: 653
             width: 200
             height: 50
             onClicked: {
@@ -79,3 +83,10 @@ Item{
         }
     }
 }
+
+/*##^##
+Designer {
+    D{i:1;invisible:true}D{i:2;invisible:true}D{i:3;invisible:true}D{i:4;invisible:true}
+D{i:5;invisible:true}
+}
+##^##*/

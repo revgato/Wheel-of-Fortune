@@ -102,10 +102,9 @@ Item{
         visible: backEnd.textList[7] == "my_turn" || backEnd.textList[9] == "my_turn" 
         TextField{
             id: guessChar
-            anchors.horizontalCenter: player2.horizontalCenter
-            anchors.top: player2.bottom
-            anchors.topMargin: 20
-            width: 200
+            x: 408
+            y: 572
+            width: 255
             height: 50
             placeholderText: "Guess a character"
         }
@@ -113,17 +112,19 @@ Item{
         Button{
             id: guessButton
             enabled: guessChar.text.length > 0
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenter: guessChar.horizontalCenter
             anchors.top: guessChar.bottom
-            anchors.bottomMargin: 20
-            width: 5 * 30
+            anchors.topMargin: 20
+            width: 200
             height: 50
+            
 
             Text{
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Guess"
+                anchors.centerIn: parent
+                text: "GUESS"
                 color: "black"
                 font.pixelSize: 30
+                font.weight: Font.Bold
             }
 
             onClicked: {
