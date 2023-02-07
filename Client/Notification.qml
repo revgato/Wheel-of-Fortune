@@ -12,15 +12,21 @@ Item{
         anchors.fill: parent
         source: "qrc:/freefire.jpg"
     }
-
-    Text{
-        id: textNotification
+    Rectangle{
+        width: 720
+        height: 360
+        color: "black"
+        Text{
+            id: textNotification
         width: 720
         height: 200
-        // wrapMode: Text.WordWrap
+        wrapMode: Text.WordWrap
         anchors.centerIn: parent
         text: backEnd.textList[0]
-        font.pixelSize: 50
+        font.pixelSize: 100
+
         color: "white"
+        }
+
     }
 }
