@@ -17,6 +17,7 @@ char guess_char;
 int client_sock;    
 struct sockaddr_in server_addr;
 int bytes_sent, bytes_received, sin_size;
+int my_turn;
 
 int connect_to_server(char *server_ip, int server_port)
 {

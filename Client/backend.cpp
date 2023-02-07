@@ -8,6 +8,7 @@ extern conn_msg_type conn_msg;
 extern char username[50];
 extern int bytes_received;
 extern int bytes_sent;
+extern int my_turn;
 Backend *Backend::instance = nullptr;
 
 // pthread_mutex_t lock;
@@ -102,24 +103,12 @@ void Backend::updateGameState()
         textList.append(QString::number(conn_msg.data.game_state.player[i].point));
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
+    if (my_turn){
+        textList.append("my_turn");
+    }
     emit gameState();
 }
 
-void Backend::updateGameStateMyTurn()
-{
-    textList.clear();
-    textList.append(QString::fromStdString(conn_msg.data.game_state.crossword));
-    textList.append(QString::number(conn_msg.data.game_state.sector));
-    textList.append(QString::fromStdString(conn_msg.data.game_state.player[conn_msg.data.game_state.turn].username));
-    for (int i = 0; i < PLAYER_PER_ROOM; i++)
-    {
-        textList.append(conn_msg.data.game_state.player[i].username);
-        // textList.append(conn_msg.data.game_state.player[i].username);
-        textList.append(QString::number(conn_msg.data.game_state.player[i].point));
-        printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
-    }
-    emit gameStateMyTurn();
-}
 
 void Backend::updateNotification()
 {
@@ -262,13 +251,13 @@ void *pthread_game_state(void *arg)
             // If current player is my turn
             if (strcmp(conn_msg.data.game_state.player[conn_msg.data.game_state.turn].username, username) == 0)
             {
-                printf("It's my turn\n");
-                emit Backend::instance->updateGameStateSignalMyTurn();
+                my_turn = 1;
             }
             else
             {
-                emit Backend::instance->updateGameStateSignal();
+                my_turn = 0;
             }
+            emit Backend::instance->updateGameStateSignal();
         }
         else if (conn_msg.type == NOTIFICATION)
         {

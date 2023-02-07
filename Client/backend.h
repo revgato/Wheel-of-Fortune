@@ -29,7 +29,6 @@ public:
     Q_INVOKABLE void join(QString username_input);
     Q_INVOKABLE void updateWaitingRoom();
     Q_INVOKABLE void updateGameState();
-    Q_INVOKABLE void updateGameStateMyTurn();
     Q_INVOKABLE void updateNotification();
     Q_INVOKABLE void updateSubQuestion();
     Q_INVOKABLE void updateSubQuestionMyTurn();
@@ -46,7 +45,6 @@ signals:
     void gameState();
     void userJoined();
     void updateGameStateSignal();
-    void updateGameStateSignalMyTurn();
     void updateNotificationSignal();
     void updateSubQuestionSignal();
     void updateSubQuestionMyTurnSignal();

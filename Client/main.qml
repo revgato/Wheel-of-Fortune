@@ -67,12 +67,7 @@ ApplicationWindow{
             console.log("Update game state")
             backEnd.updateGameState()        
         }
-
-        onUpdateGameStateSignalMyTurn: {
-            console.log("Update game state my turn")
-            backEnd.updateGameStateMyTurn()
-        }
-
+        
         onGameStateMyTurn:{
             console.log("Game state my turn")
             stackView.replace("GameStateMyTurn.qml")
