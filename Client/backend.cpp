@@ -151,7 +151,39 @@ void Backend::updateSubQuestionMyTurn()
 
 void Backend::updateEndGame()
 {
+    char last_line[100];
+    int j;
+    char *poiter_last_line;
+    char winner[50];
+    char *poiter_winner;
     textList.clear();
+    textList.append(QString::fromStdString(conn_msg.data.game_state.crossword));
+    for (int i = 0; i < PLAYER_PER_ROOM; i++)
+    {
+        textList.append(conn_msg.data.game_state.player[i].username);
+        textList.append(QString::number(conn_msg.data.game_state.player[i].point));
+        printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
+    }
+    // last_line is last line of conn_msg.data.game_state.game_message
+    for (int i = 0; i<strlen(conn_msg.data.game_state.game_message) - 2; i++)
+    {
+        if (conn_msg.data.game_state.game_message[i] == '\n'){
+            poiter_last_line = &conn_msg.data.game_state.game_message[i+1];
+        }
+    }
+    strcpy(last_line, poiter_last_line);
+    
+    // Winner is last word of last_line
+    j = 0;
+    for (int i = 0; i<strlen(last_line) - 1; i++)
+    {
+        if (last_line[i] == ' '){
+            poiter_winner = &last_line[i+1];
+        }
+    }
+    strcpy(winner, poiter_winner);
+    textList.append(QString::fromStdString(winner));
+    emit endGame();
     // TODO: configure server.c and the winner
 }
 
@@ -216,7 +248,7 @@ void *pthread_game_state(void *arg)
 {
     free(arg);
     pthread_detach(pthread_self());
-    while (conn_msg.type != END_GAME)
+    while (1)
     {
         sleep(5);
         receive_server();
@@ -260,6 +292,8 @@ void *pthread_game_state(void *arg)
         {
             printf("Game ended\n");
             emit Backend::instance->updateEndGameSignal();
+            sleep(5);
+            break;
         }
     }
     pthread_cancel(pthread_self());

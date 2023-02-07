@@ -112,6 +112,11 @@ ApplicationWindow{
             console.log("Update end game")
             backEnd.updateEndGame()   
         }
+
+        onEndGame:{
+            console.log("End game")
+            stackView.replace("EndGame.qml")
+        }
     }
 
     Button{

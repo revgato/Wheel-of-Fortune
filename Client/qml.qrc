@@ -9,6 +9,7 @@
         <file>GameStateMyTurn.qml</file>
         <file>SubQuestion.qml</file>
         <file>SubQuestionMyTurn.qml</file>
+        <file>EndGame.qml</file>
 
 
     </qresource>

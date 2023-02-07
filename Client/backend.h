@@ -56,6 +56,7 @@ signals:
     void subQuestionMyTurn();
     void notification();
     void subQuestion();
+    void endGame();
 };
 
 void *pthread_waiting_room(void *arg);
