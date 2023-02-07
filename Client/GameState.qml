@@ -84,6 +84,7 @@ Item{
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 20
+        visible: backEnd.textList[7] !== undefined
         text: backEnd.textList[7] + " : " + backEnd.textList[8]
         font.pixelSize: 90
         color: "white"

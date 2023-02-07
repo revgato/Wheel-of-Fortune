@@ -43,6 +43,7 @@ Item{
 
         Text{
             id: username2
+            visible: backEnd.textList[2] !== undefined
             text: backEnd.textList[2]
             font.pixelSize: 30
             color: "white"
