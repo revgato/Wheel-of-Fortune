@@ -6,7 +6,7 @@
 #include <string.h>
 #include <time.h>
 
-#define PLAYER_PER_ROOM 2
+#define PLAYER_PER_ROOM 3
 
 // Define structure of player
 typedef struct player_type_t
