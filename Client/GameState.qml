@@ -19,20 +19,24 @@ Item{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: 20
-        text: "Wheel of Fortune"
+        text: "CHIẾC NÓN KỲ DIỆU"
         font.pixelSize: 50
+        color: "white"
     }
     Rectangle{
         id: rectCrossWord
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: wheelOfFortuneText.bottom
-        anchors.topMargin: 20
-        width: backEnd.textList[0].length * 70
+        anchors.topMargin: 50
+        width: backEnd.textList[0].length * 45
         height: 100
-        color: "red"
+        color: "black"
+        opacity: 0.5
         Text{
             id: crossWord
+            opacity: 1
             anchors.horizontalCenter: rectCrossWord.horizontalCenter
+            anchors.verticalCenter: rectCrossWord.verticalCenter
             text: backEnd.textList[0]
             font.pixelSize: 70
             color: "white"

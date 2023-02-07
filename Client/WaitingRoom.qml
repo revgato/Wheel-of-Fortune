@@ -15,7 +15,7 @@ Item{
 
     Text{
         id: waitingRoomText
-        text: "Waiting Room"
+        text: "PHÒNG CHỜ"
         font.pixelSize: 50
         color: "white"
         anchors.horizontalCenter: parent.horizontalCenter

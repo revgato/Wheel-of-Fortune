@@ -143,6 +143,7 @@ void Backend::updateEndGame()
     char *poiter_winner;
     textList.clear();
     textList.append(QString::fromStdString(conn_msg.data.game_state.crossword));
+    printf("\n\n\nrossword: %s\n\n\n", conn_msg.data.game_state.crossword);
     for (int i = 0; i < PLAYER_PER_ROOM; i++)
     {
         textList.append(conn_msg.data.game_state.player[i].username);
