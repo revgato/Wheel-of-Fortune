@@ -267,7 +267,7 @@ Item{
 
     Item{
         id: myTurn
-        visible: backEnd.textList[7] == "my_turn" || backEnd.textList[9] == "my_turn" 
+        visible: backEnd.textList[9] == "my_turn" 
         TextField{
             id: guessChar
             x: 408
@@ -300,5 +300,18 @@ Item{
                 backEnd.guessChar(guessChar.text)
             }
         }
+    }
+    Text{
+        id: guessCharNotification
+        y: 528
+        visible: backEnd.textList[10] !== undefined
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: myTurn.top
+        anchors.bottomMargin: -562
+        text: backEnd.textList[10]
+        anchors.horizontalCenterOffset: 18
+        font.pixelSize: 30
+        color: "white"
+        font.weight: Font.Bold 
     }
 }

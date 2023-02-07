@@ -178,6 +178,37 @@ void Backend::updateEndGame()
 
 void Backend::guessChar(QString guess)
 {
+    char guess_char = toupper(guess.toStdString().c_str()[0]);
+    // If the guess is not a letter
+    if (guess_char < 'A' || guess_char > 'Z')
+    {
+        if (textList.size() > 10)
+        {
+            textList.removeLast();
+        }
+        // textList.clear();
+        textList.append("CHỈ ĐƯỢC NHẬP CHỮ CÁI");
+        emit gameState();
+        return;
+    }
+
+    for(int i = 0; i < strlen(conn_msg.data.game_state.crossword); i++)
+    {
+        if (guess_char == conn_msg.data.game_state.crossword[i])
+        {
+            if (textList.size() > 10)
+            {
+                textList.removeLast();
+            }
+            printf("Before append: %d\n", textList.size());
+            // textList.clear();
+            textList.append("CHỮ CÁI ĐÃ ĐƯỢC ĐOÁN");
+            printf("After append: %d\n", textList.size());
+            emit gameState();
+            return;
+        }
+    }
+
     conn_msg.data.game_state.guess_char = toupper(guess.toStdString().c_str()[0]);
     conn_msg.type = GUESS_CHAR;
     send_server();
