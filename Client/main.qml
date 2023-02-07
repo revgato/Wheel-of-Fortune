@@ -67,11 +67,7 @@ ApplicationWindow{
             console.log("Update game state")
             backEnd.updateGameState()        
         }
-        
-        onGameStateMyTurn:{
-            console.log("Game state my turn")
-            stackView.replace("GameStateMyTurn.qml")
-        }
+
 
         onUpdateNotificationSignal:{
             console.log("Update notification")
@@ -92,16 +88,7 @@ ApplicationWindow{
             console.log("Sub question")
             stackView.replace("SubQuestion.qml")
         }
-
-        onUpdateSubQuestionMyTurnSignal:{
-            console.log("Update sub question my turn")
-            backEnd.updateSubQuestionMyTurn()
-        }
-
-        onSubQuestionMyTurn:{
-            console.log("Sub question my turn")
-            stackView.replace("SubQuestionMyTurn.qml")
-        }
+        
 
         onUpdateEndGameSignal:{
             console.log("Update end game")

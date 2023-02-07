@@ -124,17 +124,10 @@ void Backend::updateSubQuestion()
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
+    if(my_turn){
+        textList.append("my_turn");
+    }
     emit subQuestion();
-}
-
-void Backend::updateSubQuestionMyTurn()
-{
-    textList.clear();
-    textList.append(QString::fromStdString(conn_msg.data.sub_question.question));
-    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
-    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
-    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
-    emit subQuestionMyTurn();
 }
 
 void Backend::updateEndGame()
@@ -269,11 +262,12 @@ void *pthread_game_state(void *arg)
             printf("Sub question received: %s\n", conn_msg.data.sub_question.question);
             // If current player is my turn
             if (strcmp(conn_msg.data.sub_question.username, username) == 0){
-                emit Backend::instance->updateSubQuestionMyTurnSignal();
+                my_turn = 1;
             }
             else{
-                emit Backend::instance->updateSubQuestionSignal();
+                my_turn = 0;
             }
+            emit Backend::instance->updateSubQuestionSignal();
         }
         else if (conn_msg.type == END_GAME)
         {

@@ -48,4 +48,34 @@ Item{
         font.pixelSize: 90
         color: "white"
     }
+
+    Item{
+
+        // visible: true
+        visible: backEnd.textList[4] !== undefined
+
+
+        TextField{
+            id: guessCharSubQuestion
+            anchors.horizontalCenter: question.horizontalCenter
+            anchors.top: answer3.bottom
+            anchors.bottomMargin: 20
+            width: 200
+            height: 50
+            placeholderText: "Guess A, B or C"
+        }
+
+        Button{
+            id: guessButtonSubQuestion
+            anchors.horizontalCenter: guessCharSubQuestion.horizontalCenter
+            anchors.top: guessCharSubQuestion.bottom
+            anchors.bottomMargin: 20
+            width: 200
+            height: 50
+            onClicked: {
+                console.log(guessCharSubQuestion.text)
+                backEnd.guessCharSubQuestion(guessCharSubQuestion.text)
+            }
+        }
+    }
 }

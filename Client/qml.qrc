@@ -7,7 +7,6 @@
         <file>freefire.jpg</file>
         <file>GameState.qml</file>
         <file>SubQuestion.qml</file>
-        <file>SubQuestionMyTurn.qml</file>
         <file>EndGame.qml</file>
 
 
