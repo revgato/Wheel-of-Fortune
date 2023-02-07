@@ -97,6 +97,16 @@ ApplicationWindow{
             console.log("Sub question")
             stackView.replace("SubQuestion.qml")
         }
+
+        onUpdateSubQuestionMyTurnSignal:{
+            console.log("Update sub question my turn")
+            backEnd.updateSubQuestionMyTurn()
+        }
+
+        onSubQuestionMyTurn:{
+            console.log("Sub question my turn")
+            stackView.replace("SubQuestionMyTurn.qml")
+        }
     }
 
     Button{

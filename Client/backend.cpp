@@ -138,10 +138,36 @@ void Backend::updateSubQuestion()
     emit subQuestion();
 }
 
+void Backend::updateSubQuestionMyTurn()
+{
+    textList.clear();
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.question));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
+    // sleep(SLEEP_TIME);
+    emit subQuestionMyTurn();
+}
+
+
+
+
 void Backend::guessChar(QString guess)
 {
-    conn_msg.data.game_state.guess_char = guess.toStdString().c_str()[0];
+    conn_msg.data.game_state.guess_char = toupper(guess.toStdString().c_str()[0]);
     conn_msg.type = GUESS_CHAR;
+    send_server();
+    if (bytes_sent <= 0)
+    {
+        printf("Server disconnected\n");
+        emit connectionFailed();
+    }
+}
+
+void Backend::guessCharSubQuestion(QString guess)
+{
+    conn_msg.data.sub_question.guess = toupper(guess.toStdString().c_str()[0]);
+    conn_msg.type = SUB_QUESTION;
     send_server();
     if (bytes_sent <= 0)
     {
@@ -216,7 +242,13 @@ void *pthread_game_state(void *arg)
         else if (conn_msg.type == SUB_QUESTION)
         {
             printf("Sub question received: %s\n", conn_msg.data.sub_question.question);
-            emit Backend::instance->updateSubQuestionSignal();
+            // If current player is my turn
+            if (strcmp(conn_msg.data.sub_question.username, username) == 0){
+                emit Backend::instance->updateSubQuestionMyTurnSignal();
+            }
+            else{
+                emit Backend::instance->updateSubQuestionSignal();
+            }
         }
     }
     pthread_cancel(pthread_self());
