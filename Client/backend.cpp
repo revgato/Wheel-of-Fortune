@@ -93,6 +93,8 @@ void Backend::updateGameState()
 {
     textList.clear();
     textList.append(QString::fromStdString(conn_msg.data.game_state.crossword));
+    textList.append(QString::number(conn_msg.data.game_state.sector));
+    textList.append(QString::fromStdString(conn_msg.data.game_state.player[conn_msg.data.game_state.turn].username));
     for (int i = 0; i < PLAYER_PER_ROOM; i++)
     {
         textList.append(conn_msg.data.game_state.player[i].username);
@@ -100,7 +102,6 @@ void Backend::updateGameState()
         textList.append(QString::number(conn_msg.data.game_state.player[i].point));
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
-    // sleep(SLEEP_TIME);
     emit gameState();
 }
 
@@ -108,6 +109,8 @@ void Backend::updateGameStateMyTurn()
 {
     textList.clear();
     textList.append(QString::fromStdString(conn_msg.data.game_state.crossword));
+    textList.append(QString::number(conn_msg.data.game_state.sector));
+    textList.append(QString::fromStdString(conn_msg.data.game_state.player[conn_msg.data.game_state.turn].username));
     for (int i = 0; i < PLAYER_PER_ROOM; i++)
     {
         textList.append(conn_msg.data.game_state.player[i].username);
@@ -115,7 +118,6 @@ void Backend::updateGameStateMyTurn()
         textList.append(QString::number(conn_msg.data.game_state.player[i].point));
         printf("Player %s has %d points\n", textList.at(1).toStdString().c_str(), textList.at(2).toInt());
     }
-    // sleep(SLEEP_TIME);
     emit gameStateMyTurn();
 }
 
@@ -123,7 +125,6 @@ void Backend::updateNotification()
 {
     textList.clear();
     textList.append(QString::fromStdString(conn_msg.data.notification));
-    // sleep(SLEEP_TIME);
     emit notification();
 }
 
@@ -134,7 +135,6 @@ void Backend::updateSubQuestion()
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
-    // sleep(SLEEP_TIME);
     emit subQuestion();
 }
 
@@ -145,7 +145,6 @@ void Backend::updateSubQuestionMyTurn()
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
-    // sleep(SLEEP_TIME);
     emit subQuestionMyTurn();
 }
 
@@ -250,7 +249,7 @@ void *pthread_game_state(void *arg)
     pthread_detach(pthread_self());
     while (1)
     {
-        sleep(5);
+        sleep(SLEEP_TIME);
         receive_server();
         if (bytes_received <= 0)
         {
@@ -275,7 +274,6 @@ void *pthread_game_state(void *arg)
         {
             printf("Notification received: %s\n", conn_msg.data.notification);
             emit Backend::instance->updateNotificationSignal();
-            // sleep(SLEEP_TIME);
         }
         else if (conn_msg.type == SUB_QUESTION)
         {
@@ -292,7 +290,7 @@ void *pthread_game_state(void *arg)
         {
             printf("Game ended\n");
             emit Backend::instance->updateEndGameSignal();
-            sleep(5);
+            sleep(SLEEP_TIME);
             break;
         }
     }
