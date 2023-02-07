@@ -127,6 +127,7 @@ void Backend::updateSubQuestion()
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
     textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.username));
     if (my_turn)
     {
         textList.append("my_turn");

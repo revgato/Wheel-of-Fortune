@@ -90,7 +90,7 @@ Item{
             id: rect1Turn
             width: 200
             height: 50
-            color: "black"
+            color: "#2e3436"
             opacity: 1
             border.color: "white"
             border.width: 3
@@ -111,7 +111,7 @@ Item{
             anchors.left: rect1Turn.left
             width: rect1Turn.width
             height: 100
-            color: "black"
+            color: "#2e3436"
             opacity: 1
             Text{
                 id: rect2TurnText

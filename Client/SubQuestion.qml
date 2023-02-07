@@ -184,10 +184,59 @@ Item{
         }
     }
    
+    Item{
+        id: turn
+        anchors.right: parent.right
+        anchors.rightMargin: 250
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 170
+        Rectangle{
+            id: rect1Turn
+            width: 200
+            height: 50
+            color: "#2e3436"
+            opacity: 1
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: rect1TurnText
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Current Turn"
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rect2Turn
+            anchors.top: rect1Turn.bottom
+            anchors.topMargin: 0
+            anchors.left: rect1Turn.left
+            width: rect1Turn.width
+            height: 100
+            color: "#2e3436"
+            opacity: 1
+            Text{
+                id: rect2TurnText
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[4]
+                font.pixelSize: 60
+                color: "white"
+                // Bold
+                font.weight: Font.Bold
+            }
+        }
+    }
+
+
+
 
     Item{
 
-        visible: backEnd.textList[4] !== undefined
+        visible: backEnd.textList[5] !== undefined
 
         TextField{
             id: guessCharSubQuestion
