@@ -31,6 +31,7 @@ public:
     Q_INVOKABLE void updateGameState();
     Q_INVOKABLE void updateGameStateMyTurn();
     Q_INVOKABLE void updateNotification();
+    Q_INVOKABLE void updateSubQuestion();
     Q_INVOKABLE void startGame();
     Q_INVOKABLE void exitGame();
     Q_INVOKABLE void guessChar(QString guess);
@@ -46,9 +47,11 @@ signals:
     void updateGameStateSignal();
     void updateGameStateSignalMyTurn();
     void updateNotificationSignal();
+    void updateSubQuestionSignal();
     void gameStart();
     void gameStateMyTurn();
     void notification();
+    void subQuestion();
 };
 
 void *pthread_waiting_room(void *arg);

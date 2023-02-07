@@ -7,6 +7,9 @@
         <file>freefire.jpg</file>
         <file>GameState.qml</file>
         <file>GameStateMyTurn.qml</file>
+        <file>SubQuestion.qml</file>
+        <file>SubQuestionMyTurn.qml</file>
+
 
     </qresource>
 </RCC>

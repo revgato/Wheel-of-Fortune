@@ -127,6 +127,17 @@ void Backend::updateNotification()
     emit notification();
 }
 
+void Backend::updateSubQuestion()
+{
+    textList.clear();
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.question));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[0]));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[1]));
+    textList.append(QString::fromStdString(conn_msg.data.sub_question.answer[2]));
+    // sleep(SLEEP_TIME);
+    emit subQuestion();
+}
+
 void Backend::guessChar(QString guess)
 {
     conn_msg.data.game_state.guess_char = guess.toStdString().c_str()[0];
@@ -201,6 +212,11 @@ void *pthread_game_state(void *arg)
             printf("Notification received: %s\n", conn_msg.data.notification);
             emit Backend::instance->updateNotificationSignal();
             // sleep(SLEEP_TIME);
+        }
+        else if (conn_msg.type == SUB_QUESTION)
+        {
+            printf("Sub question received: %s\n", conn_msg.data.sub_question.question);
+            emit Backend::instance->updateSubQuestionSignal();
         }
     }
     pthread_cancel(pthread_self());

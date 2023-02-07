@@ -87,6 +87,16 @@ ApplicationWindow{
             console.log("Notification")
             stackView.replace("Notification.qml")
         }
+
+        onUpdateSubQuestionSignal:{
+            console.log("Update sub question")
+            backEnd.updateSubQuestion()
+        }
+
+        onSubQuestion:{
+            console.log("Sub question")
+            stackView.replace("SubQuestion.qml")
+        }
     }
 
     Button{
