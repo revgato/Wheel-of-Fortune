@@ -67,39 +67,175 @@ Item{
         color: "white"
     }
 
-    Text{
+    // Text{
+    //     id: player0
+    //     anchors.top: rectCrossWord.bottom
+    //     anchors.topMargin: 20
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 20
+    //     text: backEnd.textList[3] + " : " + backEnd.textList[4]
+    //     font.pixelSize: 90
+    //     color: "white"
+    // }
+
+    // 2 rectangle. 1 rectangle for player0 username, 1 rectangle for player0 score
+    Item{
         id: player0
         anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
-        anchors.leftMargin: 20
-        text: backEnd.textList[3] + " : " + backEnd.textList[4]
-        font.pixelSize: 90
-        color: "white"
+        anchors.leftMargin: 100
+        Rectangle{
+            id: rectPlayer0Username
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 0.5
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: player0Username
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[3]
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rectPlayer0Score
+            anchors.top: rectPlayer0Username.bottom
+            anchors.topMargin: 0
+            anchors.left: rectPlayer0Username.left
+            width: rectPlayer0Username.width
+            height: 100
+            color: "black"
+            opacity: 0.5
+            Text{
+                id: player0Score
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[4]
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
     }
 
-    Text{
+    Item{
         id: player1
-        anchors.top: player0.bottom
+        anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        text: backEnd.textList[5] + " : " + backEnd.textList[6]
-        font.pixelSize: 90
-        color: "white"
+        anchors.left: player0.right
+        anchors.leftMargin: 350
+        Rectangle{
+            id: rectPlayer1Username
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 0.5
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: player1Username
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[5]
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rectPlayer1Score
+            anchors.top: rectPlayer1Username.bottom
+            anchors.topMargin: 0
+            anchors.left: rectPlayer1Username.left
+            width: rectPlayer1Username.width
+            height: 100
+            color: "black"
+            opacity: 0.5
+            Text{
+                id: player1Score
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[6]
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
     }
 
-    Text{
+    Item{
         id: player2
-        anchors.top: player1.bottom
+        anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        visible: backEnd.textList[7] !== undefined && backEnd.textList[7] !== "my_turn"
-        text: backEnd.textList[7] + " : " + backEnd.textList[8]
-        font.pixelSize: 90
-        color: "white"
+        anchors.left: player1.right
+        anchors.leftMargin: 600
+        Rectangle{
+            id: rectPlayer2Username
+            width: 200
+            height: 50
+            color: "black"
+            opacity: 0.5
+            border.color: "white"
+            border.width: 3
+            Text{
+                id: player2Username
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[7]
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
+        Rectangle{
+            id: rectPlayer2Score
+            anchors.top: rectPlayer2Username.bottom
+            anchors.topMargin: 0
+            anchors.left: rectPlayer2Username.left
+            width: rectPlayer2Username.width
+            height: 100
+            color: "black"
+            opacity: 0.5
+            Text{
+                id: player2Score
+                opacity: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: backEnd.textList[8]
+                font.pixelSize: 30
+                color: "white"
+            }
+        }
     }
+
+    // Text{
+    //     id: player1
+    //     anchors.top: player0.bottom
+    //     anchors.topMargin: 20
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 20
+    //     text: backEnd.textList[5] + " : " + backEnd.textList[6]
+    //     font.pixelSize: 90
+    //     color: "white"
+    // }
+
+    // Text{
+    //     id: player2
+    //     anchors.top: player1.bottom
+    //     anchors.topMargin: 20
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 20
+    //     visible: backEnd.textList[7] !== undefined && backEnd.textList[7] !== "my_turn"
+    //     text: backEnd.textList[7] + " : " + backEnd.textList[8]
+    //     font.pixelSize: 90
+    //     color: "white"
+    // }
 
     Item{
         id: myTurn
