@@ -1,4 +1,4 @@
-Mot con vit xoa ra bao nhieu canh?
+Mot con vit xoe ra bao nhieu canh?
 2 canh
 3 canh
 4 canh
@@ -11,5 +11,15 @@ C
 Tac gia cua Truyen Kieu la ai?
 Nguyen Du
 Nguyen Trai
-Nguyen Dinh Chieu
+Nam Cao
 A
+Nam mat cua bac Ho?
+1935
+1969
+1968
+B
+Bac Ho da ve tham Bach Khoa bao nhieu lan?
+1 lan
+2 lan
+3 lan
+C
