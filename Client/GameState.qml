@@ -22,21 +22,27 @@ Item{
         text: "Wheel of Fortune"
         font.pixelSize: 50
     }
-
-    Text{
-        id: crossWord
-        // anchors.centerIn: parent
+    Rectangle{
+        id: rectCrossword
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: wheelOfFortuneText.bottom
         anchors.topMargin: 20
-        text: backEnd.textList[0]
-        font.pixelSize: 70
-        color: "white"
+        width: backEnd.textList[0].length * 70
+        height: 100
+        color: "red"
+        Text{
+            id: crossWord
+            // anchors.centerIn: parent
+            text: backEnd.textList[0]
+            font.pixelSize: 70
+            color: "white"
+        }
     }
 
+    
     Text{
         id: sector
-        anchors.left: crossWord.right
+        anchors.left: rectCrossWord.right
         anchors.leftMargin: 20
         anchors.top: wheelOfFortuneText.bottom
         anchors.topMargin: 20
@@ -44,6 +50,7 @@ Item{
         font.pixelSize: 20
         color: "white"
     }
+
 
     Text{
         id: turn
@@ -58,7 +65,7 @@ Item{
 
     Text{
         id: player0
-        anchors.top: crossWord.bottom
+        anchors.top: rectCrossWord.bottom
         anchors.topMargin: 20
         anchors.left: parent.left
         anchors.leftMargin: 20
