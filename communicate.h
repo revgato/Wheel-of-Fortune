@@ -6,7 +6,8 @@
 
 #define BUFF_SIZE 1024
 #define BACKLOG 30 // Maximum number of client can connect to server
-#define WAIT_TIME 15
+#define WAIT_TIME 30
+#define SLEEP_TIME 5
 
 // Define communicate message
 typedef enum conn_msg_type_type_t
@@ -117,6 +118,7 @@ client_room_type *init_client_room()
 
 void send_all(client_room_type client_room, conn_msg_type conn_msg)
 {
+    sleep(SLEEP_TIME);
     // Send message to all client in room
     int bytes_sent;
     for (int i = 0; i < client_room.joined; i++)
